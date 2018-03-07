@@ -3,5 +3,5 @@
 export PATH=$PATH:/var/packages/Java8/target/j2sdk-image/bin
 export JAVA_HOME=/var/packages/Java8/target/j2sdk-image
 
-cd /volume1/mystaff
-python /volume1/mystaff/scrapy_wrapper.py /volume1/Downloaded
+cd /volume1/nas-share/helloworld
+python /volume1/nas-share/helloworld/scrapy_wrapper.py /volume2/formated
