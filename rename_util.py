@@ -8,6 +8,14 @@ import shutil
 import subprocess
 import re
 
+filter=["美女荷官","裸聊直播","免费试看","注册"]
+
+def is_noise_file(filename):
+    for keyword in filter:
+        if filename.find(keyword) != -1:
+            return True
+    return False
+
 def yes_or_no(question):
     while "the answer is invalid":
         reply = str(raw_input(question+' (y/n): ')).lower().strip()
@@ -38,6 +46,9 @@ for parent, dirnames, filenames in os.walk(search_path):
     for filename in filenames:
         n += 1
         if (filename.endswith('rmvb') or filename.endswith('mp4') or filename.endswith('m4v') or filename.endswith('mkv') or filename.endswith('avi') or filename.endswith('wmv')) and not filename.startswith("."):
+            if is_noise_file(filename):
+                logging.info("file %s SKIPPED." % filename )
+                continue
             m = p.search(filename)
             new_name = m.group("s_name") + "-" + m.group("num_id") + "." + m.group("ext")
             k += 1
@@ -52,9 +63,13 @@ for parent, dirnames, filenames in os.walk(search_path):
                         logging.info("file %s moved to %s" % (full_path, dest_path))
                     else:
                         reply = str(raw_input('Provide a new name:')).lower().strip()
-                        dest_path = os.path.join(to_path, reply)
-                        shutil.move(full_path, dest_path)
-                        logging.info("New Name provided, file %s moved to %s" % (full_path, dest_path)) 
+                        if reply == '':
+                            os.remove(full_path)
+                            logging.info("file %s REMOVED." % full_path )
+                        else:
+                            dest_path = os.path.join(to_path, reply)
+                            shutil.move(full_path, dest_path)
+                            logging.info("New Name provided, file %s moved to %s" % (full_path, dest_path)) 
             else:
                 logging.warn("******WRONG***** --> " + filename + " --> " + new_name )
                 if (yes_or_no("**DELETE THE FILE?** (y/n)?")):
