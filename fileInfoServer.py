@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import jsonify
+import datetime
 import json
 import sys
 reload(sys)
@@ -9,8 +10,12 @@ app = Flask(__name__)
 
 @app.route("/<jid>")
 def queryJid(jid):
+    if (jid == 'favicon.ico'):
+        return app.make_response(jsonify(details={}))
+    start = datetime.datetime.now()
     details = search_in_local(jid)
-
+    end = datetime.datetime.now()
+    print (end-start)
     response = app.make_response(jsonify(details=details))
     response.headers['Access-Control-Allow-Origin'] = '*'  
     response.headers['Access-Control-Allow-Methods'] = 'POST'  
@@ -18,11 +23,10 @@ def queryJid(jid):
     return response 
 
 def search_in_local(jid):
-    datafile = file('iready.txt')
+    datafile = file('allmine.txt')
     path = ''
     found = False
     for line in datafile:
-        print jid.lower() + ',' + line.lower()
         if jid.lower() in line.lower():
             found = True
             path = line.strip()
@@ -30,8 +34,7 @@ def search_in_local(jid):
     
     details = {
         "found": found,
-        "path": path,
-        "size": 1234
+        "path": path
     }
     return details
 
