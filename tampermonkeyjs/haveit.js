@@ -40,7 +40,7 @@ queryJid = function(q_jid){
     rtn = false;
     $.ajax({
         async: false,
-        url: 'http://127.0.0.1:5000/' + q_jid,
+        url: 'http://192.168.1.150:5555/' + q_jid,
         crossDomain: true,
         type: 'GET',
         dataType: 'json',

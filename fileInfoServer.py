@@ -23,7 +23,7 @@ def queryJid(jid):
     return response 
 
 def search_in_local(jid):
-    datafile = file('allmine.txt')
+    datafile = file('/volume1/nas-share/helloworld/allmine.txt')
     path = ''
     found = False
     for line in datafile:
@@ -39,4 +39,4 @@ def search_in_local(jid):
     return details
 
 if __name__ == "__main__":
-    app.run(threaded=True)
+    app.run(threaded=True,host='0.0.0.0',port=5555)
