@@ -1,12 +1,15 @@
 from flask import Flask
 from flask import jsonify
 import json
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
 
-@app.route("/data")
-def queryJid():
-    details = {}
+@app.route("/<jid>")
+def queryJid(jid):
+    details = search_in_local(jid)
 
     response = app.make_response(jsonify(details=details))
     response.headers['Access-Control-Allow-Origin'] = '*'  
@@ -14,8 +17,23 @@ def queryJid():
     response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'  
     return response 
 
-def find_in_local():
+def search_in_local(jid):
+    datafile = file('iready.txt')
+    path = ''
+    found = False
+    for line in datafile:
+        print jid.lower() + ',' + line.lower()
+        if jid.lower() in line.lower():
+            found = True
+            path = line.strip()
+            break
     
+    details = {
+        "found": found,
+        "path": path,
+        "size": 1234
+    }
+    return details
 
 if __name__ == "__main__":
     app.run(threaded=True)
