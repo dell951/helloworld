@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import re
 
+#javLibrary
 def jarWrapper(path):
     process = subprocess.Popen(['java -jar JAVMovieScraper.jar -scrape dmm ' + path ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     ret = []
