@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         HaveIT?-javtorrent.re
+// @name         HaveIT?-javlibrary
 // @namespace    http://tampermonkey.net/
-// @include      http://javtorrent.re/*
+// @include      http://www.javlibrary.com/*
 // @version      0.1
 // @description  do I have it already?
 // @author       You
@@ -14,26 +14,6 @@
 // @grant        GM_setClipboard
 // @grant        GM_getResourceURL
 // ==/UserScript==
-
-iterateJtext = function(jtext){
-    var rtn = false;
-    const regex = /^\[(.*)\]/g;
-    const str = jtext;
-    let m;
-
-    while ((m = regex.exec(str)) !== null) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === regex.lastIndex) {
-            regex.lastIndex++;
-        }
-        m.forEach((match, groupIndex) => {
-            if (groupIndex > 0 ){
-                rtn = queryJid(match);
-            }
-        });
-    }
-    return rtn;
-};
 
 queryJid = function(q_jid){
     rtn = false;
@@ -55,8 +35,8 @@ queryJid = function(q_jid){
 };
 
 $(document).ready(
-    $(".base-t").each(function( index ) {
-        haveit = iterateJtext($(this).text());
+    $(".id").each(function( index ) {
+        haveit = queryJid($(this).text());
         if (haveit){
             $(this).css('background-color','#00b649').css('color','white');
         }
