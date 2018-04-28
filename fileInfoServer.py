@@ -27,7 +27,7 @@ def search_in_local(jid):
     path = ''
     found = False
     for line in datafile:
-        if jid.lower() in line.lower():
+        if jid.lower().replace('-','') in line.lower().replace('-',''):
             found = True
             path = line.strip()
             break
