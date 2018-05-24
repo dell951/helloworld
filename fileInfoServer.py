@@ -3,6 +3,7 @@ from flask import jsonify
 import datetime
 import json
 import sys
+import logging
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -12,10 +13,11 @@ app = Flask(__name__)
 def queryJid(jid):
     if (jid == 'favicon.ico'):
         return app.make_response(jsonify(details={}))
+    logging.info("searching %s ..." % jid)
     start = datetime.datetime.now()
     details = search_in_local(jid)
     end = datetime.datetime.now()
-    print (end-start)
+    logging.info(end-start)
     response = app.make_response(jsonify(details=details))
     response.headers['Access-Control-Allow-Origin'] = '*'  
     response.headers['Access-Control-Allow-Methods'] = 'POST'  
@@ -36,6 +38,10 @@ def search_in_local(jid):
         "found": found,
         "path": path
     }
+    if found:
+        logging.info(jid + " Found!")
+    else:
+        logging.info(jid + " Not exist.")
     return details
 
 if __name__ == "__main__":
