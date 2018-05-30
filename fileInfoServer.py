@@ -28,14 +28,18 @@ def search_in_local(jid):
     datafile = file('/volume1/nas-share/helloworld/allmine.txt')
     path = ''
     found = False
+    czimu = False
     for line in datafile:
         if jid.lower().replace('-','') in line.lower().replace('-',''):
             found = True
+            if 'czimu' in line:
+                czimu = True
             path = line.strip()
             break
     
     details = {
         "found": found,
+        "czimu": czimu,
         "path": path
     }
     if found:

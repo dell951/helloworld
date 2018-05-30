@@ -42,4 +42,7 @@ with open('dup_list.txt', 'r') as f:
             logging.info("File %s not exist." % filename)
         else:
             gen_dup_file(os.path.splitext(filename)[0],os.path.splitext(filename)[1])
-            sys.exit(0)
+            run_command("rm -rf %s/*done" % work_path , True)
+#            sys.exit(0)
+
+#run_command("rm -rf %s/*done" % work_path , True)
