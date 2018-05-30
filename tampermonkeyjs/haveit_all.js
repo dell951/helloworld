@@ -5,8 +5,11 @@
 // @include      http://www.javlibrary.com/*
 // @include      http://www.zhaileba.info/*
 // @include      http://x2.pix378.pw/*
-// @include      https://github.com/*
-// @version      0.1
+// @include      http://d2.sku117.info/pw/*
+// @include      http://iwertygv.co/*
+// @include      http://mo6699.net/*
+// @include      http://cntorrentkitty.com/*
+// @version      0.2
 // @description  do I have it already?
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
@@ -29,7 +32,7 @@ queryJid = function(q_jid){
         type: 'GET',
         dataType: 'json',
         success: function(data, textStatus, jqXHR) {
-            rtn = data.details.found;
+            rtn = data.details;
         },
         error: function(jqXHR, textStatus, errorThrown) {
               console.log(jqXHR.status);
@@ -42,8 +45,21 @@ queryJid = function(q_jid){
 iterateMyFav = function(fulltext){
     var ignoreList = new Array("mp4","avi","mkv","rmvb","m4v","fc2","xp1024","link12345","new2018","cr2","cr1","sex2","fbf6","ck8","bbe2","ff0000","ffd800",
                               "ff6","4ef40","31bcd5","dfebf3","ee3148","dioguitar23");
-    $("<style>").prop("type", "text/css").html("mark {background-color: #00b649; color: white;}").appendTo("head");
-    $("<style>").prop("type", "text/css").html("marknothave {color: red;}").appendTo("head");
+//    $("<style>").prop("type", "text/css").html("mark {background-color: #00b649; color: white;}").appendTo("head");
+//    $("<style>").prop("type", "text/css").html("markczimu {background-color: yellow; color: red;}").appendTo("head");
+    $("<style>")
+        .prop("type", "text/css")
+        .html("\
+              .markfound {\
+                  background-color: #40BF55;\
+                  color: white;\
+               }\
+              .markczimu {\
+                  background-color: #40BF55;\
+                  color: #FFF54F;\
+               }\
+               ")
+    .appendTo("head");
     //console.log(fulltext);
     const regex = /(\d*)+([a-zA-Z]{2,})-?(\d+)+/gm;
     let m;
@@ -57,10 +73,15 @@ iterateMyFav = function(fulltext){
         // The result can be accessed through the `m`-variable.
         m.forEach((match, groupIndex) => {
             if (groupIndex == 0 && ignoreList.indexOf(match.toLowerCase()) == -1){
-                if (queryJid(match))
-                    $("body").mark(match);
-//                else
-//                    $("body").mark(match,{"className": "marknothave"});
+                detail = queryJid(match);
+                console.log(match + " detail.czimu - " + detail.czimu);
+                if (detail.found){
+                    if (detail.czimu){
+                        $("body").mark(match,{"className": "markczimu"});
+                    }else{
+                        $("body").mark(match,{"className": "markfound"});
+                    }
+                }
             }
         });
     }
