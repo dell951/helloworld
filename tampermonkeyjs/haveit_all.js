@@ -3,13 +3,12 @@
 // @namespace    http://tampermonkey.net/
 // @include      http://javtorrent.re/*
 // @include      http://www.javlibrary.com/*
-// @include      http://www.zhaileba.info/*
-// @include      http://x2.pix378.pw/*
-// @include      http://d2.sku117.info/pw/*
+// @include      http://*/pw/*
+// @include      https://www.t66y.com/*
 // @include      http://iwertygv.co/*
 // @include      http://mo6699.net/*
 // @include      http://cntorrentkitty.com/*
-// @version      0.2
+// @version      0.3
 // @description  do I have it already?
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
@@ -25,9 +24,13 @@
 
 queryJid = function(q_jid){
     rtn = false;
+    servertarget = "http://192.168.1.150:5555/";
+    if (location.protocol === "https:")
+        servertarget = "https://192.168.1.150:5556/";
+    console.log(location.protocol === "https:" );
     $.ajax({
         async: false,
-        url: 'http://192.168.1.150:5555/' + q_jid,
+        url: servertarget + q_jid,
         crossDomain: true,
         type: 'GET',
         dataType: 'json',
