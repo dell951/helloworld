@@ -4,7 +4,7 @@
 // @include      http://javtorrent.re/*
 // @include      http://www.javlibrary.com/*
 // @include      http://*/pw/*
-// @include      https://www.t66y.com/*
+// @include      http*://*/t66y.com/*
 // @include      http://iwertygv.co/*
 // @include      http://mo6699.net/*
 // @include      http://cntorrentkitty.com/*
@@ -27,7 +27,6 @@ queryJid = function(q_jid){
     servertarget = "http://192.168.1.150:5555/";
     if (location.protocol === "https:")
         servertarget = "https://192.168.1.150:5556/";
-    console.log(location.protocol === "https:" );
     $.ajax({
         async: false,
         url: servertarget + q_jid,
@@ -77,7 +76,6 @@ iterateMyFav = function(fulltext){
         m.forEach((match, groupIndex) => {
             if (groupIndex == 0 && ignoreList.indexOf(match.toLowerCase()) == -1){
                 detail = queryJid(match);
-                console.log(match + " detail.czimu - " + detail.czimu);
                 if (detail.found){
                     if (detail.czimu){
                         $("body").mark(match,{"className": "markczimu"});
