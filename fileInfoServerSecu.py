@@ -1,15 +1,19 @@
 from flask import Flask
 from flask import jsonify
+from flask import request
 import datetime
 import json
 import sys
 import logging
+
+logging.getLogger().setLevel(logging.INFO)
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
 
-@app.route("/<jid>")
+@app.route("/jid=<jid>")
 def queryJid(jid):
     if (jid == 'favicon.ico'):
         return app.make_response(jsonify(details={}))
@@ -23,6 +27,21 @@ def queryJid(jid):
     response.headers['Access-Control-Allow-Methods'] = 'POST'  
     response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'  
     return response 
+
+@app.route('/find', methods=['POST'])
+def find():
+    rtn_json = {}
+    data = request.get_json(force=True)
+    ids_list = data['ids_list']
+    for qid in ids_list:
+        rtn_json[qid] = search_in_local(qid)
+
+    logging.info('rtn_json data is : %s' % rtn_json )
+    response = app.make_response(jsonify(details_list=rtn_json))
+    response.headers['Access-Control-Allow-Origin'] = '*'  
+    response.headers['Access-Control-Allow-Methods'] = 'POST'  
+    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'  
+    return response
 
 def search_in_local(jid):
     datafile = file('/volume1/nas-share/helloworld/allmine.txt')
