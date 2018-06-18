@@ -10,9 +10,9 @@ logging.getLogger().setLevel(logging.INFO)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-filename = '/Users/azu/dell951git/helloworld/allmine.txt'
+filename = '/volume1/nas-share/helloworld/allmine.txt'
+#filename = '/volume1/nas-share/helloworld/allmine.txt'
 datafile = file(filename)
-#datafile = file('/volume1/nas-share/helloworld/allmine.txt')
 app = Flask(__name__)
 
 @app.route("/jid=<jid>")
