@@ -10,8 +10,9 @@ logging.getLogger().setLevel(logging.INFO)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-#datafile = file('/Users/azu/dell951git/helloworld/allmine.txt')
-datafile = file('/volume1/nas-share/helloworld/allmine.txt')
+filename = '/Users/azu/dell951git/helloworld/allmine.txt'
+datafile = file(filename)
+#datafile = file('/volume1/nas-share/helloworld/allmine.txt')
 app = Flask(__name__)
 
 @app.route("/jid=<jid>")
@@ -32,6 +33,8 @@ def queryJid(jid):
 @app.route('/find', methods=['POST'])
 def find():
     start = datetime.datetime.now()
+    lines = [line.rstrip('\n') for line in open(filename)]
+
     rtn_json = {}
     data = request.get_json(force=True)
     ids_list = data['ids_list']
@@ -40,7 +43,7 @@ def find():
         path = ''
         found = False
         czimu = False
-        for line in datafile:
+        for line in lines:
             if qid.lower().replace('-','') in line.lower().replace('-',''):
                 found = True
                 if 'czimu' in line:
@@ -52,7 +55,6 @@ def find():
             "czimu": czimu,
             "path": path
         }
-        datafile.seek(0)
         rtn_json[qid] = details
 
     #logging.info('rtn_json data is : %s' % rtn_json )
