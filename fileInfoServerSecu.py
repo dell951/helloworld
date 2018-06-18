@@ -10,7 +10,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
+#datafile = file('/Users/azu/dell951git/helloworld/allmine.txt')
+datafile = file('/volume1/nas-share/helloworld/allmine.txt')
 app = Flask(__name__)
 
 @app.route("/jid=<jid>")
@@ -30,21 +31,40 @@ def queryJid(jid):
 
 @app.route('/find', methods=['POST'])
 def find():
+    start = datetime.datetime.now()
     rtn_json = {}
     data = request.get_json(force=True)
     ids_list = data['ids_list']
     for qid in ids_list:
-        rtn_json[qid] = search_in_local(qid)
+        logging.info("check %s " % qid)
+        path = ''
+        found = False
+        czimu = False
+        for line in datafile:
+            if qid.lower().replace('-','') in line.lower().replace('-',''):
+                found = True
+                if 'czimu' in line:
+                    czimu = True
+                path = line.strip()
+                break
+        details = {
+            "found": found,
+            "czimu": czimu,
+            "path": path
+        }
+        datafile.seek(0)
+        rtn_json[qid] = details
 
-    logging.info('rtn_json data is : %s' % rtn_json )
+    #logging.info('rtn_json data is : %s' % rtn_json )
     response = app.make_response(jsonify(details_list=rtn_json))
     response.headers['Access-Control-Allow-Origin'] = '*'  
     response.headers['Access-Control-Allow-Methods'] = 'POST'  
     response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'  
+    end = datetime.datetime.now()
+    logging.info( end - start)
     return response
 
 def search_in_local(jid):
-    datafile = file('/volume1/nas-share/helloworld/allmine.txt')
     path = ''
     found = False
     czimu = False
@@ -65,6 +85,7 @@ def search_in_local(jid):
         logging.info(jid + " Found!")
     else:
         logging.info(jid + " Not exist.")
+    datafile.seek(0)
     return details
 
 if __name__ == "__main__":
