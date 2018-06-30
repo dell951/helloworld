@@ -2,9 +2,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment/>
-<entry key="Gui:lastUsedDirectory">/Volumes/plexready</entry>
 <entry key="Preferences:renamerString">&lt;TITLE&gt; [&lt;ACTORS&gt;] (&lt;YEAR&gt;) [&lt;ID&gt;]</entry>
 <entry key="Gui:lastUsedScraper">DMM.co.jp</entry>
-<entry key="Preferences:sanitizerForFilename">[\\/:*?"&lt;&gt;|\r\n]|[ ]+$|(?&lt;=[^.])[.]+$|(?&lt;=.{250})(.+)(?=[.]\p{Alnum}{3}$)</entry>
 <entry key="Preferences:scrapeInJapanese">true</entry>
+<entry key="Preferences:sanitizerForFilename">[\\/:*?"&lt;&gt;|\r\n]|[ ]+$|(?&lt;=[^.])[.]+$|(?&lt;=.{250})(.+)(?=[.]\p{Alnum}{3}$)</entry>
 </properties>

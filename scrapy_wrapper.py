@@ -9,8 +9,8 @@ import subprocess
 import re
 
 #javLibrary
-def jarWrapper(path):
-    process = subprocess.Popen(['java -jar JAVMovieScraper.jar -scrape dmm ' + path ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+def jarWrapper(scrape, path):
+    process = subprocess.Popen(['java -jar JAVMovieScraper.jar -scrape ' + scrape + ' ' +  path ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     ret = []
     while process.poll() is None:
         line = process.stdout.readline()
@@ -26,6 +26,10 @@ def jarWrapper(path):
 logging.getLogger().setLevel(logging.INFO)
 
 search_path = str(sys.argv[1])
+
+scrape = 'dmm'
+if sys.argv[2]:
+    scrape = str(sys.argv[2])
 
 n = 0
 k = 0
@@ -43,7 +47,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                 #logging.info('Succeed.')
             else:
                 k += 1
-                result = jarWrapper(full_path)
+                result = jarWrapper(scrape, full_path)
                 logging.info(result)
         else:
             pass
