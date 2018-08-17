@@ -3,7 +3,11 @@
 // @namespace    http://tampermonkey.net/
 // @include      http://javtorrent.re/*
 // @include      http://www.javlibrary.com/*
+// @include      https://www.xianrenfuli.com/*
 // @include      http://*/pw/*
+// @include      http://*lufi99.info/*
+// @include      http://1024.qdldd.biz/*
+// @include      http://*2.*.*/*
 // @include      http://*/2048/*
 // @include      http*://*t66y.com/*
 // @include      http://iwertygv.co/*
@@ -12,7 +16,7 @@
 // @include      http://cntorrentkitty.com/*
 // @include      http://www.ceo-7158.com/*
 // @include      file:///Users/azu/Desktop/a.html
-// @version      0.3
+// @version      0.5
 // @description  do I have it already?
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
@@ -103,18 +107,9 @@ var iterateMyFav = function(fulltext){
         m.forEach((match, groupIndex) => {
             if (groupIndex == 0 && ignoreList.indexOf(match.toLowerCase()) == -1){
                 qids.push(match);
-//                detail = queryJid(match);
-//                if (detail.found){
-//                    if (detail.czimu){
-//                        $("body").mark(match,{"className": "markczimu"});
-//                    }else{
-//                        $("body").mark(match,{"className": "markfound"});
-//                    }
-//                }
             }
         });
     }
-
 
     search_json['ids_list'] = qids;
     var all_list = queryJidList(JSON.stringify(search_json));
