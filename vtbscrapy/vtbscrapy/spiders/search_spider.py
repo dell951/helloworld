@@ -26,7 +26,9 @@ class SearchSpider(scrapy.Spider):
         #print articles[0]
         for article in articles:
             #print article
+            print "---------------------------------"
             date = article.xpath(date_XPath).extract_first()
             title = article.xpath(title_XPath).extract_first()
             #print "%s ---- %s" % (title.replace('/',''), date)
             print "%s ./runscrapy.sh %s %s" %(date ,self.studio, title.replace('/',''))
+            print "---------------------------------"
