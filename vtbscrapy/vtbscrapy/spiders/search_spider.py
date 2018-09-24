@@ -1,7 +1,9 @@
 import scrapy
-from texttable import Texttable
+import os
+import subprocess
 import urlparse
 import time
+from texttable import Texttable
 
 article_XPath = "//article[@class='videolist-item']"
 date_XPath = ".//div[@class='videolist-caption-date']/text()"
@@ -13,6 +15,8 @@ class SearchSpider(scrapy.Spider):
     queryKey = ""
     baseUrl = ""
     articleDict = {}
+    actionDict = {}
+    count = 0
 
     def __init__(self, studio, queryKey, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
@@ -35,7 +39,9 @@ class SearchSpider(scrapy.Spider):
             isoDate = time.strftime('%Y-%m-%d', time.strptime(date, "%B %d, %Y"))
             title = article.xpath(title_XPath).extract_first()
             cmd = "./runscrapy.sh %s %s" %(self.studio, title.replace('/',''))
-            self.articleDict[isoDate] = [date, title.replace('/',''), cmd]
+            self.articleDict[isoDate] = [self.count, date, title.replace('/',''), cmd]
+            self.actionDict[self.count] = [cmd]
+            self.count += 1
 
         nextPage_XPath = "//a[contains(@class,'pagination-link pagination-next ajaxable')]/@href"
         nextPageUrl = response.xpath(nextPage_XPath).extract_first()
@@ -44,9 +50,16 @@ class SearchSpider(scrapy.Spider):
 
     def closed(self, reason):
         resultTable = Texttable()
-        resultTable.set_cols_width([30, 60, 100])
+        resultTable.set_cols_width([3, 30, 60, 100])
         isoDates = self.articleDict.keys() 
         isoDates.sort(reverse=True)
         for isoDate in isoDates:
             resultTable.add_row(self.articleDict[isoDate])
         print resultTable.draw()
+        
+        while True :   
+            action_no = raw_input("Your choice: ")
+            if action_no == '' :
+                break
+            else:
+                print self.actionDict[int(action_no)][0]
