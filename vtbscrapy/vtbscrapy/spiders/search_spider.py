@@ -1,4 +1,7 @@
 import scrapy
+from texttable import Texttable
+import urlparse
+import time
 
 article_XPath = "//article[@class='videolist-item']"
 date_XPath = ".//div[@class='videolist-caption-date']/text()"
@@ -8,27 +11,42 @@ class SearchSpider(scrapy.Spider):
     name = "search"    
     studio = ""
     queryKey = ""
+    baseUrl = ""
+    articleDict = {}
 
     def __init__(self, studio, queryKey, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
         self.studio = studio
         self.queryKey = queryKey.replace("."," ")
-
+        self.baseUrl = 'https://www.' + self.studio + '.com/search?q='+ self.queryKey
+       
     def start_requests(self):
         urls = [
-            'https://www.' + self.studio + '.com/search?q='+ self.queryKey
+            self.baseUrl
         ]
+
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        articles = response.xpath(article_XPath)
-        #print articles[0]
+        articles = response.xpath(article_XPath)        
         for article in articles:
-            #print article
-            print "---------------------------------"
             date = article.xpath(date_XPath).extract_first()
+            isoDate = time.strftime('%Y-%m-%d', time.strptime(date, "%B %d, %Y"))
             title = article.xpath(title_XPath).extract_first()
-            #print "%s ---- %s" % (title.replace('/',''), date)
-            print "%s ./runscrapy.sh %s %s" %(date ,self.studio, title.replace('/',''))
-            print "---------------------------------"
+            cmd = "./runscrapy.sh %s %s" %(self.studio, title.replace('/',''))
+            self.articleDict[isoDate] = [date, title.replace('/',''), cmd]
+
+        nextPage_XPath = "//a[contains(@class,'pagination-link pagination-next ajaxable')]/@href"
+        nextPageUrl = response.xpath(nextPage_XPath).extract_first()
+        if nextPageUrl:
+            yield scrapy.Request(urlparse.urljoin(self.baseUrl, nextPageUrl), callback=self.parse)
+
+    def closed(self, reason):
+        resultTable = Texttable()
+        resultTable.set_cols_width([30, 60, 100])
+        isoDates = self.articleDict.keys() 
+        isoDates.sort(reverse=True)
+        for isoDate in isoDates:
+            resultTable.add_row(self.articleDict[isoDate])
+        print resultTable.draw()

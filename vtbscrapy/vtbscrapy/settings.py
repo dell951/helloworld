@@ -14,6 +14,7 @@ BOT_NAME = 'vtbscrapy'
 SPIDER_MODULES = ['vtbscrapy.spiders']
 NEWSPIDER_MODULE = 'vtbscrapy.spiders'
 
+LOG_LEVEL = 'ERROR'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'vtbscrapy (+http://www.yourdomain.com)'

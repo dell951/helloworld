@@ -76,25 +76,25 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         self.movie_title = response.xpath(title_XPath).extract_first()
-        print "Movie Tile     - %s" % self.movie_title
+        print "Movie Tile         - %s" % self.movie_title
         #movie_stars = response.xpath(stars_XPath).extract()
         #print "Movie Stars    - %s" % movie_stars
         startURLs = response.xpath(startsURL_XPath).extract()
-        print "Stars URL      - %s" % startURLs
+        print "Stars URL          - %s" % startURLs
         
         for starurl in startURLs:
             star_page = response.urljoin(starurl)
             yield scrapy.Request(star_page, callback=self.parse_stars)   
 
         self.movie_rate = response.xpath(rate_XPath).extract_first()
-        print "Rate           - %s" % self.movie_rate
+        print "Rate               - %s" % self.movie_rate
         self.movie_date = response.xpath(date_XPath).extract_first()
-        print "Release Date   - %s" % self.movie_date
+        print "Release Date       - %s" % self.movie_date
         self.movie_desc = response.xpath(desc_XPath).extract_first()
-        print "Description    - %s" % self.movie_desc
+        print "Description        - %s" % self.movie_desc
         
         self.poster_url = response.xpath(poster_XPath).extract_first()
-        print "poster         - %s" % self.poster_url
+        print "poster             - %s" % self.poster_url
         rposter = requests.get(self.poster_url, stream=True)
         poster_path = self.title + "-poster.jpg"
         if rposter.status_code == 200:
@@ -103,7 +103,7 @@ class QuotesSpider(scrapy.Spider):
                 shutil.copyfileobj(rposter.raw, f0) 
 
         self.fanart_url = response.xpath(fanart_XPath).extract_first()
-        print "fanart         - %s" % self.fanart_url
+        print "fanart             - %s" % self.fanart_url
         rfanart = requests.get(self.fanart_url, stream=True)
         fanart_path = self.title + "-fanart.jpg"
         if rfanart.status_code == 200:
@@ -114,7 +114,7 @@ class QuotesSpider(scrapy.Spider):
     def parse_stars(self, response):
         #for stars
         star_photo_XPath = "//div[contains(@class,'model-profile-thumb')]/img/@src"
-        if self.studio == "vixen":
+        if self.studio.startswith("v"):
             star_name_XPath = "//td[contains(@class,'model-profile-info')]//h1[contains(@class,'caption-title')]/text()"
         else:
             star_name_XPath = "//div[contains(@class,'model-profile-info')]//h1[contains(@class,'caption-title')]/text()"
@@ -131,7 +131,7 @@ class QuotesSpider(scrapy.Spider):
                 shutil.copyfileobj(rstar_photo.raw, f2) 
         
         self.actors = self.actors + actorTemplate%{'movie_star': star_name, 'movie_star_photo': star_photo_url}
-        print self.actors
+        #print self.actors
     
     def closed(self, reason):
         nfoInfo = nfoTemplate%{'movie_title': self.movie_title,'movie_desc': self.movie_desc, 'movie_rate': self.movie_rate, 
