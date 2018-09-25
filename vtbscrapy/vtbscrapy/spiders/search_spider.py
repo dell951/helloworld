@@ -57,9 +57,9 @@ class SearchSpider(scrapy.Spider):
             resultTable.add_row(self.articleDict[isoDate])
         print resultTable.draw()
         
-        while True :   
-            action_no = raw_input("Your choice: ")
-            if action_no == '' :
-                break
-            else:
-                print self.actionDict[int(action_no)][0]
+        #while True :   
+        #    action_no = raw_input("Your choice: ")
+        #    if action_no == '' :
+        #        break
+        #    else:
+        #        print self.actionDict[int(action_no)][0]
