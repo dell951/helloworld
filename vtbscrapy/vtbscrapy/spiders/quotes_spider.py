@@ -91,7 +91,7 @@ class QuotesSpider(scrapy.Spider):
         self.movie_date = response.xpath(date_XPath).extract_first()
         print "Release Date       - %s" % self.movie_date
         self.movie_desc = response.xpath(desc_XPath).extract_first()
-        print "Description        - %s" % self.movie_desc
+        print "Description        - %s" % self.movie_desc.encode('utf-8')
         
         self.poster_url = response.xpath(poster_XPath).extract_first()
         print "poster             - %s" % self.poster_url
