@@ -76,7 +76,7 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         self.movie_title = response.xpath(title_XPath).extract_first()
-        print "Movie Tile         - %s" % self.movie_title
+        print "Movie Tile         - %s" % self.movie_title.encode('utf-8')
         #movie_stars = response.xpath(stars_XPath).extract()
         #print "Movie Stars    - %s" % movie_stars
         startURLs = response.xpath(startsURL_XPath).extract()
@@ -138,4 +138,4 @@ class QuotesSpider(scrapy.Spider):
             'movie_date': self.movie_date, 'title': self.title, 'actors': self.actors, 'studio': self.studio, 'poster': self.poster_url, 'fanart': self.fanart_url} 
         with open(os.path.join('alldone/',self.title+".nfo"), "w") as nfofile:
             nfofile.write(nfoInfo.encode('utf-8'))
-        print "%s NFO Saved." % self.title
+        print "%s NFO Saved." % self.title.encode('utf-8')

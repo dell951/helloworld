@@ -1,4 +1,5 @@
 vtbscrapy/vtbscrapy/spiders/*.pyc
+vtbscrapy/vtbscrapy/spiders/quotes_spider.pyc
 .DS_Store
 AmalgamationSettings\347\232\204\345\211\257\346\234\254.json
 crontab_bk
