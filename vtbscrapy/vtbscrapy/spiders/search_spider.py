@@ -50,7 +50,7 @@ class SearchSpider(scrapy.Spider):
 
     def closed(self, reason):
         resultTable = Texttable()
-        resultTable.set_cols_width([3, 30, 60, 100])
+        resultTable.set_cols_width([3, 20, 40, 80])
         isoDates = self.articleDict.keys() 
         isoDates.sort(reverse=True)
         for isoDate in isoDates:
