@@ -3,6 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @include      http://1be.biz/*
 // @include      http://1dl.biz/*
+// @include      http://*.rmdown.com/*
 // @version      0.1
 // @description  try to take over the world!
 // @author       You
@@ -18,7 +19,12 @@
 
 $(document).ready(function () {
     setTimeout(function () {
-         document.querySelector('a.j-link').click();
+	     try{
+			document.querySelector('a.j-link').click();
+         }catch(nonExist){}
+		 try{
+			document.querySelector('input.btn').click();
+		 }catch(nonExist){} 	
     }, 1000);
  });
  

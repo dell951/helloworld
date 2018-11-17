@@ -85,10 +85,12 @@ var iterateMyFav = function(fulltext){
               .markfound {\
                   background-color: #40BF55;\
                   color: white;\
+				  font-weight: bold;\
                }\
               .markczimu {\
-                  background-color: #40BF55;\
-                  color: #FFF54F;\
+                  background-color: #0F7884;\
+                  color: yellow;\
+				  font-weight: bold;\
                }\
                ")
     .appendTo("head");
