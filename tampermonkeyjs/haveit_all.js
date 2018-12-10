@@ -9,6 +9,8 @@
 // @include      http://1024.qdldd.biz/*
 // @include      http://*2.*.*/*
 // @include      http://*/2048/*
+// @include      http*://*javbus.com/*
+// @include      https://www.busdmm.cc/*
 // @include      http*://*t66y.com/*
 // @include      http://iwertygv.co/*
 // @include      http://mo6699.net/*
