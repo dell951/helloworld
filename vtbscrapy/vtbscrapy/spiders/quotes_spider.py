@@ -72,7 +72,9 @@ class QuotesSpider(scrapy.Spider):
             'https://www.' + self.studio + '.com/'+ self.title
         ]
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            request = scrapy.Request(url=url, callback=self.parse)
+            request.meta['dont_redirect'] = True
+            yield request
 
     def parse(self, response):
         self.movie_title = response.xpath(title_XPath).extract_first()
