@@ -10,14 +10,14 @@ import shutil
 logging.getLogger().setLevel(logging.INFO)
 work_path = str(sys.argv[1])
 
-p = re.compile(r'(?P<s_name>[a-zA-Z]*)-?(?P<num_id>\d*)[C|R]?.(?P<ext>[mp4aviwmkpg]*)')
+p = re.compile(r'(?P<s_name>[a-zA-Z]*)-?(?P<num_id>\d*)[C|R]?.(?P<ext>[mp4aviwmkpgrmvb]*)')
 n_p = re.compile(r'[a-zA-Z]+-\d+.[mp4aviwm]+')
 
 k = 0
 
 for parent, dirnames, filenames in os.walk(work_path):
     for filename in filenames:
-        if (filename.endswith('rmvb') or filename.endswith('mp4') or filename.endswith('m4v') or filename.endswith('mkv') or filename.endswith('avi') or filename.endswith('wmv')) and not filename.startswith("."):
+        if (filename.endswith('rmvb') or filename.endswith('mp4') or filename.endswith('m4v') or filename.endswith('rmvb') or filename.endswith('mkv') or filename.endswith('avi') or filename.endswith('wmv')) and not filename.startswith("."):
             m = p.search(filename)
             if m:
                 k += 1 
