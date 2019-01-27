@@ -7,6 +7,7 @@ import datetime
 import json
 import sys
 import logging
+import subprocess
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -45,17 +46,21 @@ def find():
         path = ''
         found = False
         czimu = False
+        res = ''
         for line in lines:
             if qid.lower().replace('-','') in line.lower().replace('-',''):
                 found = True
-                if 'czimu' in line:
-                    czimu = True
                 path = line.strip()
+                res = retrieve_resolution(path)    
+                if 'czimu' in line:
+                    czimu = True                
                 break
+
         details = {
             "found": found,
             "czimu": czimu,
-            "path": path
+            "path": path,
+            "resolution": res
         }
         rtn_json[qid] = details
 
@@ -70,20 +75,23 @@ def find():
 
 def search_in_local(jid):
     path = ''
+    res = ''
     found = False
     czimu = False
     for line in datafile:
         if jid.lower().replace('-','') in line.lower().replace('-',''):
             found = True
+            path = line.strip()
+            res = retrieve_resolution(path)
             if 'czimu' in line:
                 czimu = True
-            path = line.strip()
             break
     
     details = {
         "found": found,
         "czimu": czimu,
-        "path": path
+        "path": path,
+        "resolution": res
     }
     if found:
         logging.info(jid + " Found!")
@@ -91,6 +99,22 @@ def search_in_local(jid):
         logging.info(jid + " Not exist.")
     datafile.seek(0)
     return details
+
+def retrieve_resolution(path):
+    cmd = "ffmpeg -i "+ path +" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2"
+    print cmd
+    process = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    ret = []
+    while process.poll() is None:
+        line = process.stdout.readline()
+        if line != '' and line.endswith('\n'):
+            ret.append(line[:-1])
+    stdout, stderr = process.communicate()
+    ret += stdout.split('\n')
+    if stderr != '':
+        ret += stderr.split('\n')
+    ret.remove('')
+    return ret
 
 if __name__ == "__main__":
     app.run(threaded=True,host='0.0.0.0',port=5555)

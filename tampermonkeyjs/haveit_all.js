@@ -1,13 +1,17 @@
 // ==UserScript==
 // @name         HaveIT?
 // @namespace    http://tampermonkey.net/
+// @include      http://888kf.xyz/*
 // @include      http://javtorrent.re/*
 // @include      http://www.javlibrary.com/*
 // @include      https://www.xianrenfuli.com/*
 // @include      http://*/pw/*
+// @include      https://shtsds1.me/*
 // @include      http://*lufi99.info/*
 // @include      http://1024.qdldd.biz/*
 // @include      http://*2.*.*/*
+// @include      https://www.javbus.com/*
+// @include      https://www.busdmm.cc*
 // @include      http://*/2048/*
 // @include      http*://*javbus.com/*
 // @include      https://www.busdmm.cc/*
@@ -18,7 +22,7 @@
 // @include      http://cntorrentkitty.com/*
 // @include      http://www.ceo-7158.com/*
 // @include      file:///Users/azu/Desktop/a.html
-// @version      0.5
+// @version      0.6
 // @description  do I have it already?
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
@@ -34,6 +38,7 @@
 
 var queryJidList = function(jsondata){
     var rtn = new Object();
+    var startTime = new Date();
     var servertarget = "http://192.168.1.150:5555/find";
     if (location.protocol === "https:")
         servertarget = "https://192.168.1.150:5556/find";
@@ -46,6 +51,13 @@ var queryJidList = function(jsondata){
         data: jsondata,
         success: function(data, textStatus, jqXHR) {
             rtn = data;
+            var endTime = new Date();
+            var timeDiff = endTime - startTime; //in ms
+                // strip the ms
+            timeDiff /= 1000;
+
+            var seconds = Math.round(timeDiff);
+            console.log("queryJidList took " + seconds + " seconds");
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log("exception : " + jqXHR.status);
@@ -56,6 +68,7 @@ var queryJidList = function(jsondata){
 
 var queryJid = function(q_jid){
     var rtn = false;
+    var startTime = new Date();
     var servertarget = "http://192.168.1.150:5555/jid=";
     if (location.protocol === "https:")
         servertarget = "https://192.168.1.150:5556/jid=";
@@ -67,6 +80,13 @@ var queryJid = function(q_jid){
         dataType: 'json',
         success: function(data, textStatus, jqXHR) {
             rtn = data.details;
+            var endTime = new Date();
+            var timeDiff = endTime - startTime; //in ms
+                // strip the ms
+            timeDiff /= 1000;
+
+            var seconds = Math.round(timeDiff);
+            console.log("queryJid took " + seconds + " seconds");
         },
         error: function(jqXHR, textStatus, errorThrown) {
               console.log(jqXHR.status);
@@ -87,14 +107,24 @@ var iterateMyFav = function(fulltext){
               .markfound {\
                   background-color: #40BF55;\
                   color: white;\
-				  font-weight: bold;\
+		          font-weight: bold;\
+               }\
+              .markHfound {\
+                  background-color: #40BF55;\
+                  color: yellow;\
+		          font-weight: bold;\
                }\
               .markczimu {\
                   background-color: #0F7884;\
-                  color: yellow;\
-				  font-weight: bold;\
+                  color: white;\
+		         font-weight: bold;\
                }\
-               ")
+              .markHczimu {\
+                background-color: #0F7884;\
+                color: yellow;\
+                font-weight: bold;\
+               }\
+            ")
     .appendTo("head");
     //console.log(fulltext);
     const regex = /(\d*)+([a-zA-Z]{2,})-?(\d+)+/gm;
@@ -128,11 +158,18 @@ var iterateMyFav = function(fulltext){
         m.forEach((match, groupIndex) => {
             if (groupIndex == 0 && ignoreList.indexOf(match.toLowerCase()) == -1){
                 detail = all_list.details_list[match];
+                console.log(detail)
                 if (detail.found){
                     if (detail.czimu){
-                        $("body").mark(match,{"className": "markczimu"});
+                        if (detail.resolution[0] >= 1080)
+                            $("body").mark(match,{"className": "markHczimu"});
+                        else
+                            $("body").mark(match,{"className": "markczimu"});
                     }else{
-                        $("body").mark(match,{"className": "markfound"});
+                        if (detail.resolution[0] >= 1080)
+                            $("body").mark(match,{"className": "markHfound"});
+                        else
+                            $("body").mark(match,{"className": "markfound"});
                     }
                 }
             }
