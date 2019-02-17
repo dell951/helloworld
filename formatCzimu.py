@@ -10,7 +10,7 @@ import shutil
 logging.getLogger().setLevel(logging.INFO)
 work_path = str(sys.argv[1])
 
-p = re.compile(r'(?P<s_name>[a-zA-Z]*)-?(?P<num_id>\d*)[C|R]?.(?P<ext>[mp4aviwmkpgrmvb]*)')
+p = re.compile(r'(?P<s_name>[a-zA-Z]*)-?(?P<num_id>\d*)-?[c|C|R]?.(?P<ext>[mp4aviwmkpgrmvb]*)')
 n_p = re.compile(r'[a-zA-Z]+-\d+.[mp4aviwm]+')
 
 k = 0
