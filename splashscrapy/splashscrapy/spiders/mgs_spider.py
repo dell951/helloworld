@@ -93,7 +93,7 @@ class MgsSpider(scrapy.Spider):
     def parse(self, response):
         try:
             self.movie_title = self.fid + ' ' + response.xpath(title_XPath).extract_first().strip()
-            print self.movie_title
+            print self.movie_title.encode('utf-8')
             self.poster_url = response.xpath(poster_url_XPath).extract_first()
             print self.poster_url
             rposter = requests.get(self.poster_url, stream=True)
