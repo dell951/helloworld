@@ -61,6 +61,7 @@ parser.add_argument('-d', '--desc', required=False, nargs=1, help=("Description"
 parser.add_argument('-s', '--studio', required=False, nargs=1, help=("Studio"))
 parser.add_argument('-p', '--poster', required=False, nargs=1, help=("Poster URL"))
 parser.add_argument('-f', '--fanart', required=False, nargs=1, help=("Fanart URL"))
+parser.add_argument('-r', '--releasedate', required=False, nargs=1, help=("Release Date"))
 
 args = parser.parse_args()
 logging.getLogger().setLevel(logging.INFO)
@@ -76,7 +77,7 @@ else:
   movie_title = fid.upper() + ' ' + args.movietitle[0]
 
 if not args.desc:
-  movie_desc = fid
+  movie_desc = movie_title
 else:
   movie_desc = args.desc[0]
 
@@ -84,6 +85,11 @@ if not args.studio:
   studio = ""
 else:
   studio = args.studio[0]
+
+if not args.releasedate:
+  movie_date = ""
+else:
+  movie_date = args.releasedate[0]
 
 if not args.poster:
   poster_url = ""
@@ -106,7 +112,7 @@ for actor in args.actors:
   actors = actors + actorTemplate%{'movie_star': actor, 'movie_star_photo': ""}
 
 nfoInfo = nfoTemplate%{'movie_title': movie_title,'movie_desc': movie_desc, 'movie_rate': "",
-    'movie_date': "", 'mid': fid, 'actors': actors, 'studio': studio, 'poster': poster_url, 'fanart': fanart_url}
+    'movie_date': movie_date, 'mid': fid, 'actors': actors, 'studio': studio, 'poster': poster_url, 'fanart': fanart_url}
 with open(os.path.join('', fid +".nfo"), "w") as nfofile:
     nfofile.write(nfoInfo)
 logging.info("%s NFO/Poster/Fanart Saved." % fid)
