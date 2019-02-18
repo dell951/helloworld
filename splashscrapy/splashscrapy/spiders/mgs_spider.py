@@ -91,50 +91,47 @@ class MgsSpider(scrapy.Spider):
             yield SplashRequest(url=url, callback=self.parse, endpoint='execute', args={'wait': 0.5, 'lua_source':script})
 
     def parse(self, response):
-        try:
-            self.movie_title = self.fid + ' ' + response.xpath(title_XPath).extract_first().strip()
-            print self.movie_title.encode('utf-8')
-            self.poster_url = response.xpath(poster_url_XPath).extract_first()
-            print self.poster_url
-            rposter = requests.get(self.poster_url, stream=True)
-            poster_path = self.fid + "-poster.jpg"
-            if rposter.status_code == 200:
-                with open(os.path.join('alldone/',poster_path), 'wb') as f0:
-                    rposter.raw.decode_content = True
-                    shutil.copyfileobj(rposter.raw, f0) 
+        self.movie_title = self.fid + ' ' + response.xpath(title_XPath).extract_first().strip()
+        print self.movie_title.encode('utf-8')
+        self.poster_url = response.xpath(poster_url_XPath).extract_first()
+        print self.poster_url
+        rposter = requests.get(self.poster_url, stream=True)
+        poster_path = self.fid + "-poster.jpg"
+        if rposter.status_code == 200:
+            with open(os.path.join('alldone/',poster_path), 'wb') as f0:
+                rposter.raw.decode_content = True
+                shutil.copyfileobj(rposter.raw, f0) 
 
-            self.fanart_url = response.xpath(fanart_url_XPath).extract_first()
-            rfanart = requests.get(self.fanart_url, stream=True)
-            fanart_path = self.fid + "-fanart.jpg"
-            if rfanart.status_code == 200:
-                with open(os.path.join('alldone/',fanart_path), 'wb') as f0:
-                    rfanart.raw.decode_content = True
-                    shutil.copyfileobj(rfanart.raw, f0) 
-            print self.fanart_url
-            self.movie_desc = response.xpath(desc_XPath).extract_first()
-            print self.movie_desc
-            try:
-                actor = response.xpath(actros_XPath).extract_first().replace('"','').strip().split()[0]
-            except:
-                actor = response.xpath(actros_XPath).extract_first().replace('"','').strip()
-            
-            self.actors = actorTemplate%{'movie_star': actor, 'movie_star_photo': ""}
-            print self.actors
-            #self.movie_date = response.xpath(date_XPath).extract()
-            briefs = response.xpath(date_XPath).extract()
-            details = ""
-            for item in briefs:
-                details = details + item
-            datesection = re.findall("<td>20\d\d\/\d\d\/\d\d</td>", details)
-            if datesection:
-                self.movie_date = datesection[0].replace('<td>','').replace('</td>','').replace('/','-')
-            nfoInfo = nfoTemplate%{'movie_title': self.movie_title,'movie_desc': self.movie_desc, 'movie_rate': "",
-                'movie_date': self.movie_date, 'mid': self.fid, 'actors': self.actors, 'studio': "", 'poster': self.poster_url, 'fanart': self.fanart_url}
-            with open(os.path.join('alldone/', self.fid +".nfo"), "w") as nfofile:
-                nfofile.write(nfoInfo.encode('utf-8'))
-            print "%s NFO/Poster/Fanart Saved." % self.fid
-        except Exception as e:
-            print "%s NFO/Poster/Fanart Failed, error : %s" % (self.fid, e)
+        self.fanart_url = response.xpath(fanart_url_XPath).extract_first()
+        rfanart = requests.get(self.fanart_url, stream=True)
+        fanart_path = self.fid + "-fanart.jpg"
+        if rfanart.status_code == 200:
+            with open(os.path.join('alldone/',fanart_path), 'wb') as f0:
+                rfanart.raw.decode_content = True
+                shutil.copyfileobj(rfanart.raw, f0) 
+        print self.fanart_url
+        self.movie_desc = response.xpath(desc_XPath).extract_first()
+        print self.movie_desc
+        try:
+            actor = response.xpath(actros_XPath).extract_first().replace('"','').strip().split()[0]
+        except:
+            actor = response.xpath(actros_XPath).extract_first().replace('"','').strip()
+        
+        self.actors = actorTemplate%{'movie_star': actor, 'movie_star_photo': ""}
+        print self.actors
+        #self.movie_date = response.xpath(date_XPath).extract()
+        briefs = response.xpath(date_XPath).extract()
+        details = ""
+        for item in briefs:
+            details = details + item
+        datesection = re.findall("<td>20\d\d\/\d\d\/\d\d</td>", details)
+        if datesection:
+            self.movie_date = datesection[0].replace('<td>','').replace('</td>','').replace('/','-')
+        nfoInfo = nfoTemplate%{'movie_title': self.movie_title,'movie_desc': self.movie_desc, 'movie_rate': "",
+            'movie_date': self.movie_date, 'mid': self.fid, 'actors': self.actors, 'studio': "", 'poster': self.poster_url, 'fanart': self.fanart_url}
+        with open(os.path.join('alldone/', self.fid +".nfo"), "w") as nfofile:
+            nfofile.write(nfoInfo.encode('utf-8'))
+        print "%s NFO/Poster/Fanart Saved." % self.fid
 
     def closed(self, reason):
         pass
