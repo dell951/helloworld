@@ -111,14 +111,14 @@ class MgsSpider(scrapy.Spider):
                 shutil.copyfileobj(rfanart.raw, f0) 
         print self.fanart_url
         self.movie_desc = response.xpath(desc_XPath).extract_first()
-        print self.movie_desc
+        print self.movie_desc.encode('utf-8')
         try:
             actor = response.xpath(actros_XPath).extract_first().replace('"','').strip().split()[0]
         except:
             actor = response.xpath(actros_XPath).extract_first().replace('"','').strip()
         
         self.actors = actorTemplate%{'movie_star': actor, 'movie_star_photo': ""}
-        print self.actors
+        print self.actors.encode('utf-8')
         #self.movie_date = response.xpath(date_XPath).extract()
         briefs = response.xpath(date_XPath).extract()
         details = ""
