@@ -1,7 +1,7 @@
 import os
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for vtbscrapy project
+# Scrapy settings for splashscrapy project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -10,17 +10,19 @@ import os
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'vtbscrapy'
+BOT_NAME = 'splashscrapy'
 
-SPIDER_MODULES = ['vtbscrapy.spiders']
-NEWSPIDER_MODULE = 'vtbscrapy.spiders'
+SPIDER_MODULES = ['splashscrapy.spiders']
+NEWSPIDER_MODULE = 'splashscrapy.spiders'
 
-LOG_LEVEL = 'ERROR'
+LOG_LEVEL = 'INFO'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'vtbscrapy (+http://www.yourdomain.com)'
+#USER_AGENT = 'splashscrapy (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+
+SPLASH_URL = 'http://192.168.1.150:8050'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -47,16 +49,22 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+SPIDER_MIDDLEWARES = {
 #    'vtbscrapy.middlewares.VtbscrapySpiderMiddleware': 543,
-#}
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
+DOWNLOADER_MIDDLEWARES = {
 #    'vtbscrapy.middlewares.VtbscrapyDownloaderMiddleware': 543,
-#}
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
 
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
@@ -66,7 +74,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'vtbscrapy.pipelines.VtbscrapyPipeline': 300,
+#    'splashscrapy.pipelines.SplashscrapyPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

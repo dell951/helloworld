@@ -98,7 +98,7 @@ class MgsSpider(scrapy.Spider):
         rposter = requests.get(self.poster_url, stream=True)
         poster_path = self.fid + "-poster.jpg"
         if rposter.status_code == 200:
-            with open(os.path.join('',poster_path), 'wb') as f0:
+            with open(os.path.join('alldone/',poster_path), 'wb') as f0:
                 rposter.raw.decode_content = True
                 shutil.copyfileobj(rposter.raw, f0) 
 
@@ -106,7 +106,7 @@ class MgsSpider(scrapy.Spider):
         rfanart = requests.get(self.fanart_url, stream=True)
         fanart_path = self.fid + "-fanart.jpg"
         if rfanart.status_code == 200:
-            with open(os.path.join('',fanart_path), 'wb') as f0:
+            with open(os.path.join('alldone/',fanart_path), 'wb') as f0:
                 rfanart.raw.decode_content = True
                 shutil.copyfileobj(rfanart.raw, f0) 
         print self.fanart_url
@@ -131,6 +131,6 @@ class MgsSpider(scrapy.Spider):
     def closed(self, reason):
         nfoInfo = nfoTemplate%{'movie_title': self.movie_title,'movie_desc': self.movie_desc, 'movie_rate': "",
             'movie_date': self.movie_date, 'mid': self.fid, 'actors': self.actors, 'studio': "", 'poster': self.poster_url, 'fanart': self.fanart_url}
-        with open(os.path.join('', self.fid +".nfo"), "w") as nfofile:
+        with open(os.path.join('alldone/', self.fid +".nfo"), "w") as nfofile:
             nfofile.write(nfoInfo.encode('utf-8'))
-        logging.info("%s NFO/Poster/Fanart Saved." % self.fid)
+        print "%s NFO/Poster/Fanart Saved." % self.fid
