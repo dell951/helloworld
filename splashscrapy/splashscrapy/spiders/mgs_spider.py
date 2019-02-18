@@ -71,7 +71,7 @@ class MgsSpider(scrapy.Spider):
         self.fid = fid
         print "proceed %s..." % fid
         super(MgsSpider, self).__init__(*args, **kwargs)
-        self.baseUrl = 'https://www.mgstage.com/product/product_detail/'+ self.fid + '/'
+        self.baseUrl = 'https://www.mgstage.com/product/product_detail/'+ self.fid.upper() + '/'
        
     def start_requests(self):
         urls = [
