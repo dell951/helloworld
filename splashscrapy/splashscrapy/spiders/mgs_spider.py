@@ -47,7 +47,7 @@ actorTemplate = """  <actor>
 """
 
 title_XPath = "//h1[contains(@class,'tag')]/text()"
-poster_url_XPath = "//div[contains(@class,'detail_photo')]//img/@src"
+poster_url_XPath = "//div[contains(@class,'detail_photo') or contains(@class,'detail_data')]//img/@src"
 fanart_url_XPath = "//dl//a[contains(@class,'sample_image')]/@href"
 desc_XPath = "//p[contains(@class,'txt introduction')]/text()"
 actros_XPath = "//table/tbody/tr/th/../td/a/text()" #will get the first one as the actor
