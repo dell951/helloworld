@@ -59,7 +59,7 @@ class ScuteSpider(scrapy.Spider):
     name = "scute"    
     fid = ""
     s_id = ""
-    studio = ""
+    studio = "S-Cute"
     actors = ""
     movie_title = ""
     movie_rate = ""
