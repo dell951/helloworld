@@ -2,8 +2,12 @@ import scrapy
 import os
 import subprocess
 import urlparse
+import datetime
 import time
 from texttable import Texttable
+
+#format file with regex:
+#(vixen|tushy)\s(\d\d\.\d\d\.\d\d)\.(.*)(\.And.*)?\.XXX.*
 
 article_XPath = "//article[@class='videolist-item']"
 date_XPath = ".//div[@class='videolist-caption-date']/text()"
@@ -13,15 +17,20 @@ class SearchSpider(scrapy.Spider):
     name = "search"    
     studio = ""
     queryKey = ""
+    filedate = ""
     baseUrl = ""
     articleDict = {}
     actionDict = {}
     count = 0
 
-    def __init__(self, studio, queryKey, *args, **kwargs):
+    def __init__(self, studio, queryKey,filedate, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
         self.studio = studio
         self.queryKey = queryKey.replace("."," ")
+        if filedate != "":
+            self.filedate="20%s"%filedate.replace(".","-")
+        #adate = datetime.datetime.strptime(targetDate, "%Y-%m-%d").date()
+        #self.filedate = "%s %d, %s" % (adate.strftime("%B"), adate.day, adate.strftime("%Y"))
         self.baseUrl = 'https://www.' + self.studio + '.com/search?q='+ self.queryKey
        
     def start_requests(self):
@@ -39,6 +48,8 @@ class SearchSpider(scrapy.Spider):
             isoDate = time.strftime('%Y-%m-%d', time.strptime(date, "%B %d, %Y"))
             title = article.xpath(title_XPath).extract_first()
             cmd = "./runscrapy.sh %s %s" %(self.studio, title.replace('/',''))
+            if isoDate == self.filedate:
+                print ">>> %s" % cmd
             self.articleDict[isoDate] = [self.count, date, title.replace('/',''), cmd]
             self.actionDict[self.count] = [cmd]
             self.count += 1
