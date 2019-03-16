@@ -44,7 +44,10 @@ class SearchSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        articles = response.xpath(article_XPath)        
+        articles = response.xpath(article_XPath)
+        if len(articles) == 0:
+            print "Nothing found"
+            pass
         for article in articles:
             date = article.xpath(date_XPath).extract_first()
             isoDate = time.strftime('%Y-%m-%d', time.strptime(date, "%B %d, %Y"))

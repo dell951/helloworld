@@ -32,13 +32,17 @@ for parent, dirnames, filenames in os.walk(search_path):
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
                         cmd = "./docker-search.sh %s %s %s" %(target_match.group(1), target_match.group(3),target_match.group(2),)
-                        #print cmd
-                        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+                        print "#%s" % cmd
+                        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         output, err = p.communicate()
                         scrapycmd = output.split(b'\n')[0]
-                        print scrapycmd
-                        targetFileName = scrapycmd.split(' ')[2]
-                        print "mv %s %s.mp4" % (full_path, os.path.join(parent,targetFileName))
+                        print "output - [[[%s]]]" % scrapycmd
+                        if scrapycmd == "Nothing found":
+                            pass
+                        else:
+                            print scrapycmd
+                            targetFileName = scrapycmd.split(' ')[2]
+                            print "mv %s %s.mp4" % (full_path, os.path.join(parent,targetFileName))
 
 
         else:
