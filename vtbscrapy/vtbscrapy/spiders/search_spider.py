@@ -22,13 +22,15 @@ class SearchSpider(scrapy.Spider):
     articleDict = {}
     actionDict = {}
     count = 0
+    showFullresult = False
 
-    def __init__(self, studio, queryKey,filedate, *args, **kwargs):
+    def __init__(self, studio, queryKey, filedate, showFullresult=False, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
         self.studio = studio
         self.queryKey = queryKey.replace("."," ")
         if filedate != "":
             self.filedate="20%s"%filedate.replace(".","-")
+        self.showFullresult = showFullresult
         #adate = datetime.datetime.strptime(targetDate, "%Y-%m-%d").date()
         #self.filedate = "%s %d, %s" % (adate.strftime("%B"), adate.day, adate.strftime("%Y"))
         self.baseUrl = 'https://www.' + self.studio + '.com/search?q='+ self.queryKey
@@ -49,7 +51,7 @@ class SearchSpider(scrapy.Spider):
             title = article.xpath(title_XPath).extract_first()
             cmd = "./runscrapy.sh %s %s" %(self.studio, title.replace('/',''))
             if isoDate == self.filedate:
-                print ">>> %s" % cmd
+                print "%s" % cmd
             self.articleDict[isoDate] = [self.count, date, title.replace('/',''), cmd]
             self.actionDict[self.count] = [cmd]
             self.count += 1
@@ -66,7 +68,8 @@ class SearchSpider(scrapy.Spider):
         isoDates.sort(reverse=True)
         for isoDate in isoDates:
             resultTable.add_row(self.articleDict[isoDate])
-        print resultTable.draw()
+        if self.showFullresult:
+            print resultTable.draw()
         
         #while True :   
         #    action_no = raw_input("Your choice: ")

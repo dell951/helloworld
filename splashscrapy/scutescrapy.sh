@@ -2,7 +2,7 @@
 
 mkdir -p alldone
 
-sudo docker run --rm -v $(pwd):/runtime/app myscrapydocker:1.2 scrapy crawl mgs -a fid="$1"
+sudo docker run --rm -v $(pwd):/runtime/app myscrapydocker:1.2 scrapy crawl scute -a fid="$1"
 mv alldone/* /volumeUSB1/usbshare1-2/porn/mgstmp/
 
 #scrapy crawl mgs -a fid="$1"
