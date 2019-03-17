@@ -50,7 +50,7 @@ class SearchSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=(self.parse_old if self.studio == "vixen" else self.parse_new))
 
     def parse_old(self, response):
-        print "handle vixen"
+        #print "handle vixen"
         articles = response.xpath(old_article_XPath)
         if len(articles) == 0:
             print "Nothing found"
@@ -73,14 +73,14 @@ class SearchSpider(scrapy.Spider):
             yield scrapy.Request(urlparse.urljoin(self.baseUrl, nextPageUrl), callback=self.parse)
 
     def parse_new(self, response):
-        print "handle tushy/blacked"
+        #print "handle tushy/blacked"
         articles = response.xpath(new_article_XPath).extract()
         if len(articles) == 0:
             print "Nothing found"
             pass
         for article in articles:
             movie_url = response.urljoin(article)
-            print movie_url
+            #print movie_url
             yield scrapy.Request(movie_url, callback=self.parse_date)
 
         #nextPage_XPath = "//a[contains(@class,'pagination-link pagination-next ajaxable')]/@href"
