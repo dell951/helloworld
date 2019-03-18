@@ -36,7 +36,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         output, err = p.communicate()
                         scrapycmd = output.split(b'\n')[0]
-                        print "output - [[[%s]]]" % scrapycmd
+                        print "#output - [[[%s]]]" % scrapycmd
                         if scrapycmd == "Nothing found":
                             pass
                         else:
