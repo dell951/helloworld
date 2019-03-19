@@ -52,11 +52,6 @@ old_desc_XPath = "//div[contains(@class,'player-description')]//span[contains(@c
 old_fanart_XPath = "//div[contains(@class,'swiper-wrapper')]//a[contains(@class,'swiper-content-item')]/img/@src"
 old_poster_XPath = "//div[contains(@class, 'player-img-wrap')]//img/@src"
 
-new_title_XPath = "//h1[@data-test-component='VideoTitle']/text()"
-new_startsURL_XPath = "//div[@data-test-component='VideoModels']/a/@href"
-new_rate_XPath = "//button[@data-test-component='RatingButton']//text()"
-new_date_pattern = r'.*releaseDateFormatted":"(.* .* .*)","runLengthFormatted'
-new_desc_pattern = r'.*"description":"(.*)","runLength":.*,"shootDate"'
 # Fetch JSON object 
 # https://jsoneditoronline.org/?id=bbef330441b24957aeaceedcea621ba7
 
@@ -83,11 +78,11 @@ class QuotesSpider(scrapy.Spider):
         ]
         for url in urls:
             print "Proceeding %s" % url
-            request = scrapy.Request(url=url, callback=(self.parse_old if self.studio == "vixen" else self.parse_new))
+            request = scrapy.Request(url=url, callback=(self.parse_byXPath if self.studio == "vixen" else self.parse_byJson))
             request.meta['dont_redirect'] = True
             yield request
 
-    def parse_old(self, response):
+    def parse_byXPath(self, response):
         self.movie_title = response.xpath(old_title_XPath).extract_first()
         print "Movie Tile         - %s" % self.movie_title.encode('utf-8')
         #movie_stars = response.xpath(stars_XPath).extract()
@@ -97,7 +92,7 @@ class QuotesSpider(scrapy.Spider):
         
         for starurl in startURLs:
             star_page = response.urljoin(starurl)
-            yield scrapy.Request(star_page, callback=self.old_parse_stars)   
+            yield scrapy.Request(star_page, callback=self.parse_stars_by_xpath)   
 
         self.movie_rate = response.xpath(old_rate_XPath).extract_first()
         print "Rate               - %s" % self.movie_rate
@@ -124,7 +119,7 @@ class QuotesSpider(scrapy.Spider):
                 rfanart.raw.decode_content = True
                 shutil.copyfileobj(rfanart.raw, f1) 
         
-    def old_parse_stars(self, response):
+    def parse_stars_by_xpath(self, response):
         #for stars
         star_photo_XPath = "//div[contains(@class,'model-profile-thumb')]/img/@src"
         if self.studio.startswith("v"):
@@ -146,29 +141,24 @@ class QuotesSpider(scrapy.Spider):
         self.actors = self.actors + actorTemplate%{'movie_star': star_name, 'movie_star_photo': star_photo_url}
         #print self.actors
 
-    def parse_new(self, response):
-        self.movie_title = response.xpath(new_title_XPath).extract_first()
-        print "Movie Tile         - %s" % self.movie_title.encode('utf-8')
-        startURLs = response.xpath(new_startsURL_XPath).extract()
-        print "Stars URL          - %s" % startURLs
-        self.movie_rate = response.xpath(new_rate_XPath).extract()[2]
-        print "Rate               - %s" % self.movie_rate
-        date_match = re.search(new_date_pattern, response.text)
-        if date_match:
-            self.movie_date = date_match.group(1)
-        print "Release Date       - %s" % self.movie_date
-        desc_match = re.search(new_desc_pattern, response.text)
-        if desc_match:
-            self.movie_desc = desc_match.group(1)
-        print "Description        - %s" % self.movie_desc.encode('utf-8')
-
+    def parse_byJson(self, response):
         json_text = re.search(r'window.__INITIAL_STATE__ = (.*)?;', response.text)
         if json_text:
             json_obj = json.loads(json_text.group(1))
-            posters = json_obj["page"]["data"]["/%s"%self.title]["data"]["video"]["images"]['poster']
+            movie_data = json_obj["page"]["data"]["/%s"%self.title]["data"]
+
+            self.movie_title = movie_data["video"]["title"]
+            print "Movie Tile         - %s" % self.movie_title.encode('utf-8')
+            self.movie_rate = movie_data["video"]["textRating"]
+            print "Rate               - %s" % self.movie_rate
+            self.movie_date = movie_data["video"]["releaseDateFormatted"]
+            print "Release Date       - %s" % self.movie_date
+            self.movie_desc = movie_data["video"]["description"]
+            print "Description        - %s" % self.movie_desc.encode('utf-8')
+
+            posters = movie_data["video"]["images"]['poster']
             for poster in posters:
                 if '1920x1080' in poster["name"]:
-                    print poster["src"]
                     self.poster_url = poster["src"]
                     print "poster             - %s" % self.poster_url
                     rposter = requests.get(self.poster_url, stream=True)
@@ -179,7 +169,7 @@ class QuotesSpider(scrapy.Spider):
                             shutil.copyfileobj(rposter.raw, f0) 
 
             #only take the first as the fanart
-            fanart = json_obj["page"]["data"]["/%s"%self.title]["data"]["pictureset"][0]
+            fanart = movie_data["pictureset"][0]
             self.fanart_url = fanart["main"][0]["src"]
             print "fanart             - %s" % self.fanart_url
             rfanart = requests.get(self.fanart_url, stream=True)
@@ -189,11 +179,37 @@ class QuotesSpider(scrapy.Spider):
                     rfanart.raw.decode_content = True
                     shutil.copyfileobj(rfanart.raw, f1)
 
-            stars = json_obj["page"]["data"]["/%s"%self.title]["data"]["video"]["models"]
-            for star in stars:
-                self.actors = self.actors + actorTemplate%{'movie_star': star, 'movie_star_photo': ""}
+            models = movie_data["video"]["modelsSlugged"]
+            for model in models:
+                star_url = "/%s" % model['slugged']
+                print "star_url             - %s" % star_url
+                star_page = response.urljoin(star_url)
+                yield scrapy.Request(star_page, callback=self.parse_stars_by_json)
+
         else:
-            print "Somehow I didn't find the Json data"
+            print "Somehow I didn't find the Json data[Movie]"
+
+    def parse_stars_by_json(self, response):
+        json_text = re.search(r'window.__INITIAL_STATE__ = (.*)?;', response.text)
+        if json_text:
+            json_obj = json.loads(json_text.group(1))
+            path_name = json_obj["page"]["location"]["pathname"]
+            star_data = json_obj["page"]["data"][path_name]["data"]['model']
+            star_name = star_data["name"]
+            star_photo_url = star_data["images"]['poster'][0]['src']
+
+            subprocess.call("mkdir -p alldone/.actors", shell=True)  
+            print "star actor         - %s" % star_photo_url
+            rstar_photo = requests.get(star_photo_url, stream=True)
+            star_photo_path = star_name.replace(' ','_') + ".jpg"
+            if rstar_photo.status_code == 200:
+                with open(os.path.join('alldone/.actors',star_photo_path), 'wb') as f2:
+                    rstar_photo.raw.decode_content = True
+                    shutil.copyfileobj(rstar_photo.raw, f2) 
+        
+            self.actors = self.actors + actorTemplate%{'movie_star': star_name, 'movie_star_photo': star_photo_url}
+        else:
+            print "Somehow I didn't find the Json data [Star]"
 
     def closed(self, reason):
         if self.movie_title != '':
