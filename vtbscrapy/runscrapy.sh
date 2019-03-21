@@ -2,7 +2,15 @@
 
 mkdir -p alldone
 
-sudo docker run --rm -v $(pwd):/runtime/app myscrapydocker:1.2 scrapy crawl vtb -a studio=$1 -a title=$2
+CRAWLER="vtb"
+
+if [ "$1"=="letsdoeit" ]; then
+   CRAWLER="$1"
+fi
+
+echo $CRAWLER
+
+sudo docker run --rm -v $(pwd):/runtime/app myscrapydocker:1.2 scrapy crawl $CRAWLER -a studio=$1 -a title=$2
 #mv alldone/* /volumeUSB1/usbshare1-2/porn/pretty/
 
 #scrapy crawl vtb -a studio=$1 -a title=$2
