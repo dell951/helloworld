@@ -4,8 +4,9 @@ mkdir -p alldone
 
 CRAWLER="vtb"
 
-if [ "$1"=="letsdoeit" ]; then
-   CRAWLER="$1"
+if [ $1 == "letsdoeit" ]
+then
+   CRAWLER=$1
 fi
 
 echo $CRAWLER
