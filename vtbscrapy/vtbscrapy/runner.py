@@ -5,13 +5,17 @@ try:
         [
             'scrapy',
             'crawl',
-            'letsdoeit',
+            'searchletsdoeit',
             '-a',
             'studio=letsdoeit',
             '-a',
-            'title=babes-love-to-rock-n-roll',
+            'queryKey=lovenia.lux',
+            '-a',
+            'filedate=19.03.16',
+            '-a',
+            'showFullresult=True',
             '-o',
-            'out.json',
+            'out.json'
         ]
     )
 except SystemExit:
