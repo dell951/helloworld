@@ -94,7 +94,7 @@ class LetsDoeItSpider(scrapy.Spider):
             print "Movie Tile         - %s" % self.movie_title.encode('utf-8')
             self.movie_rate = ''
             print "Rate               - %s" % self.movie_rate
-            movie_simpledate = movie_data["uploadDate"].replace('T00:00:00','')
+            movie_simpledate = re.sub(r'T\d\d:\d\d:\d\d','',movie_data["uploadDate"]) #movie_data["uploadDate"].replace('T00:00:00','')
             self.movie_date = time.strftime('%B %d, %Y', time.strptime(movie_simpledate, "%Y-%m-%d"))
             print "Release Date       - %s" % self.movie_date
             self.movie_desc = movie_data["description"]

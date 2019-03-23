@@ -62,7 +62,7 @@ class SearchLetsdoeit(scrapy.Spider):
         if json_text:
             formated_json = json_text.replace('\n','').replace('},    }','}}')
             movie_data = json.loads(formated_json)
-            movie_simpledate = movie_data["uploadDate"].replace('T00:00:00','')
+            movie_simpledate = re.sub(r'T\d\d:\d\d:\d\d','',movie_data["uploadDate"]) #movie_data["uploadDate"].replace('T00:00:00','')
             movie_id = movie_data['url'].replace('https://' + self.studio + '.com/video/', '')
             movie_id = movie_id.split('/')[1]
             #isoDate = time.strftime('%Y-%m-%d', time.strptime(movie_simpledate, "%B %d, %Y"))
