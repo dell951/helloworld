@@ -85,7 +85,7 @@ class SearchLetsdoeit(scrapy.Spider):
         isoDates.sort(reverse=True)
         for isoDate in isoDates:
             resultTable.add_row(self.articleDict[isoDate])
-        if self.showFullresult:
+        if self.showFullresult == True:
             print resultTable.draw()
         
         #while True :   
