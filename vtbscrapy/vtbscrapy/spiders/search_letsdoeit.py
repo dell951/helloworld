@@ -26,6 +26,7 @@ class SearchLetsdoeit(scrapy.Spider):
     actionDict = {}
     count = 0
     showFullresult = False
+    found = False
 
     def __init__(self, studio, queryKey, filedate="", showFullresult=False, *args, **kwargs):
         super(SearchLetsdoeit, self).__init__(*args, **kwargs)
@@ -70,6 +71,7 @@ class SearchLetsdoeit(scrapy.Spider):
             #print isoDate + ' ' + cmd
             if movie_simpledate == self.filedate:
                 print "%s" % cmd
+                self.found = True
 
             self.articleDict[movie_simpledate] = [self.count, movie_simpledate, movie_id, cmd]
             self.actionDict[self.count] = [cmd]
@@ -81,13 +83,14 @@ class SearchLetsdoeit(scrapy.Spider):
     def closed(self, reason):
         resultTable = Texttable()
         resultTable.set_cols_width([3, 20, 40, 80])
-        isoDates = self.articleDict.keys() 
+        isoDates = self.articleDict.keys()
         isoDates.sort(reverse=True)
         for isoDate in isoDates:
             resultTable.add_row(self.articleDict[isoDate])
         if self.showFullresult == True:
             print resultTable.draw()
-        
+        if self.found == False:
+            print "Nothing found"
         #while True :   
         #    action_no = raw_input("Your choice: ")
         #    if action_no == '' :
