@@ -30,3 +30,10 @@ vtbscrapy/porn
 vtbscrapy/tmp.sh
 vtbscrapy/tmp_response.txt
 wget-log
+splashscrapy/.vscode/
+splashscrapy/splashscrapy/.vscode/
+splashscrapy/splashscrapy/out.json
+vtbscrapy/out.json
+vtbscrapy/vtbscrapy/out.json
+watermark.py
+watermark.sh

@@ -5,18 +5,32 @@ try:
         [
             'scrapy',
             'crawl',
-            'searchletsdoeit',
+            'vtb',
             '-a',
-            'studio=letsdoeit',
+            'studio=tushy',
             '-a',
-            'queryKey=bunny.love',
-            '-a',
-            'filedate=18.11.24',
-            '-a',
-            'showFullresult=True',
+            'title=one-last-time',
             '-o',
             'out.json'
         ]
     )
+
+    #    execute(
+#        [
+#            'scrapy',
+#            'crawl',
+#            'searchletsdoeit',
+#            '-a',
+#            'studio=letsdoeit',
+#            '-a',
+#            'queryKey=stacy.cruz',
+#            '-a',
+#            'filedate=19.06.06',
+#            '-a',
+#            'showFullresult=True',
+#            '-o',
+#            'out.json'
+#        ]
+#    )
 except SystemExit:
     pass
