@@ -78,7 +78,7 @@ class QuotesSpider(scrapy.Spider):
         ]
         for url in urls:
             print "Proceeding %s" % url
-            request = scrapy.Request(url=url, callback=(self.parse_byXPath if self.studio == "vixen" else self.parse_byJson))
+            request = scrapy.Request(url=url, callback=self.parse_byJson)
             request.meta['dont_redirect'] = True
             yield request
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-CRAWLER="vtb"
+CRAWLER="search"
 
 if [ $1 == "letsdoeit" ]
 then

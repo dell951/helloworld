@@ -74,7 +74,7 @@ logging.info("Proceed %s" % fid)
 if not args.movietitle:
   movie_title = fid
 else:
-  movie_title = fid.upper() + ' ' + args.movietitle[0]
+  movie_title = args.movietitle[0]
 
 if not args.desc:
   movie_desc = movie_title

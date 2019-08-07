@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 search_path = str(sys.argv[1])
 
-search_string_pattern= r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*).xxx.*\.mp4'
+search_string_pattern= r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*)\.mp4'
 
 for parent, dirnames, filenames in os.walk(search_path):
     for filename in filenames:
@@ -28,7 +28,6 @@ for parent, dirnames, filenames in os.walk(search_path):
             else:
                 search_target = filename.lower()
                 if search_target.startswith("blacked") or search_target.startswith("tushy") or search_target.startswith("vixen"):
-#                    print search_target
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
                         cmd = "./docker-search.sh %s %s %s %s" %(target_match.group(1), target_match.group(3),target_match.group(2),'False')
