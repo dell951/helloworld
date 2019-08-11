@@ -7,30 +7,31 @@ try:
             'crawl',
             'vtb',
             '-a',
-            'studio=tushy',
+            'studio=blacked',
             '-a',
-            'title=one-last-time',
+            'title=stretching',
             '-o',
             'out.json'
         ]
     )
 
-    #    execute(
+#    execute(
 #        [
 #            'scrapy',
 #            'crawl',
-#            'searchletsdoeit',
+#            'search',
 #            '-a',
-#            'studio=letsdoeit',
+#            'studio=tushy',
 #            '-a',
 #            'queryKey=stacy.cruz',
-#            '-a',
-#            'filedate=19.06.06',
+##            '-a',
+#            'filedate=19.06.30',
 #            '-a',
 #            'showFullresult=True',
 #            '-o',
 #            'out.json'
 #        ]
 #    )
+
 except SystemExit:
     pass

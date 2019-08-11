@@ -97,8 +97,8 @@ class QuotesSpider(scrapy.Spider):
             posters = movie_data['images']['poster']
             subprocess.call('mkdir -p alldone', shell = True)
             for poster in posters:
-                if '1920x1080' in poster['name']:
-                    self.poster_url = poster['src']
+                if '320x362' in poster['name']:
+                    self.poster_url = poster['highdpi']['2x']
                     print 'poster             - %s' % self.poster_url
                     rposter = requests.get(self.poster_url, stream = True)
                     poster_path = self.title + '-poster.jpg'
@@ -136,13 +136,19 @@ class QuotesSpider(scrapy.Spider):
             star_name = star_data['description']
             star_photo_url = star_data['images']['profile'][0]['src']
             subprocess.call('mkdir -p alldone/.actors', shell = True)
-            print 'star actor         - %s' % star_photo_url
-            rstar_photo = requests.get(star_photo_url, stream = True)
-            star_photo_path = star_name.replace(' ', '_') + '.jpg'
-            if rstar_photo.status_code == 200:
-                with open(os.path.join('alldone/.actors', star_photo_path), 'wb') as f2:
-                    rstar_photo.raw.decode_content = True
-                    shutil.copyfileobj(rstar_photo.raw, f2)
+            print 'star actor         - %s' % star_photo_url            
+            #i = 0
+            #while i < 3:
+            #    try:                 
+            #        rstar_photo = requests.get(star_photo_url, stream = True, timeout=20)
+            #        star_photo_path = star_name.replace(' ', '_') + '.jpg'
+            #        if rstar_photo.status_code == 200:
+            #            with open(os.path.join('alldone/.actors', star_photo_path), 'wb') as f2:
+            #                rstar_photo.raw.decode_content = True
+            #                shutil.copyfileobj(rstar_photo.raw, f2)
+            #    except Exception:
+            #        print 'Fetching star photo timeout, try again...'
+            #        i += 1            
             self.actors = self.actors + actorTemplate % {
                 'movie_star': star_name,
                 'movie_star_photo': star_photo_url }

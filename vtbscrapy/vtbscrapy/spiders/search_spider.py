@@ -33,13 +33,13 @@ class SearchSpider(scrapy.Spider):
     def __init__(self, studio, queryKey, filedate="", showFullresult=False, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
         self.studio = studio
-        self.queryKey = queryKey.replace("."," ")
+        self.queryKey = queryKey.replace(".","-")
         if filedate != "":
             self.filedate="20%s"%filedate.replace(".","-")
         self.showFullresult = showFullresult
         #adate = datetime.datetime.strptime(targetDate, "%Y-%m-%d").date()
         #self.filedate = "%s %d, %s" % (adate.strftime("%B"), adate.day, adate.strftime("%Y"))
-        self.baseUrl = 'https://www.' + self.studio + '.com/search?q='+ self.queryKey
+        self.baseUrl = 'https://www.' + self.studio + '.com/'+ self.queryKey
        
     def start_requests(self):
         urls = [
