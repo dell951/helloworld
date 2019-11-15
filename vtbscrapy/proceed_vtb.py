@@ -31,7 +31,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
                         theStudio = target_match.group(1)
-                        theActor = target_match.group(3).replace('.4k','').replace('.and')
+                        theActor = target_match.group(3).replace('.4k','').replace('.and','')
                         theDate = target_match.group(2)
                         cmd = "./docker-search.sh %s %s %s %s" %(theStudio, theActor, theDate,'False')
                         print "#%s" % cmd
