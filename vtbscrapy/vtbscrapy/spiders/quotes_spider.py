@@ -88,11 +88,11 @@ class QuotesSpider(scrapy.Spider):
             page_data = json_obj['page']['data']['/%s' % self.title]['data']
             self.movie_title = movie_data['title']
             print 'Movie Tile         - %s' % self.movie_title.encode('utf-8')
-            self.movie_rate = movie_data['rating']
+            self.movie_rate = movie_data['textRating']
             print 'Rate               - %s' % self.movie_rate
             self.movie_date = movie_data['releaseDateFormatted']
             print 'Release Date       - %s' % self.movie_date
-            self.movie_desc = movie_data['description']
+            self.movie_desc = movie_data['title']
             print 'Description        - %s' % self.movie_desc.encode('utf-8')
             posters = movie_data['images']['poster']
             subprocess.call('mkdir -p alldone', shell = True)
