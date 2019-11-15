@@ -30,7 +30,10 @@ for parent, dirnames, filenames in os.walk(search_path):
                 if search_target.startswith("blacked") or search_target.startswith("tushy") or search_target.startswith("vixen"):
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
-                        cmd = "./docker-search.sh %s %s %s %s" %(target_match.group(1), target_match.group(3),target_match.group(2),'False')
+                        theStudio = target_match.group(1)
+                        theActor = target_match.group(3).replace('.4k','').replace('.and')
+                        theDate = target_match.group(2)
+                        cmd = "./docker-search.sh %s %s %s %s" %(theStudio, theActor, theDate,'False')
                         print "#%s" % cmd
                         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         output, err = p.communicate()
