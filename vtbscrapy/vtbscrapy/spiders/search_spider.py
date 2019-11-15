@@ -49,7 +49,7 @@ class SearchSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            print url
+            #print url
             yield scrapy.Request(url=url, callback=(self.parse_new))
 
     def parse_old(self, response):
@@ -83,7 +83,7 @@ class SearchSpider(scrapy.Spider):
             pass
         for article in articles:
             movie_url = response.urljoin(article)
-            print movie_url
+            #print movie_url
             yield scrapy.Request(movie_url, callback=self.parse_date_by_json)
 
         #nextPage_XPath = "//a[contains(@class,'pagination-link pagination-next ajaxable')]/@href"
@@ -124,6 +124,7 @@ class SearchSpider(scrapy.Spider):
             allMovies = json_obj["videos"]
             for movie in allMovies:
                 if "id" in movie:
+                    #print "#%s" % movie["id"]
                     date = movie["releaseDateFormatted"]
                     realDate = datetime.strptime(date,"%B %d, %Y")# + timedelta(days=1)
                     isoDate = realDate.strftime('%Y-%m-%d') 
