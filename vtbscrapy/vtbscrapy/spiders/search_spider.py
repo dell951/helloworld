@@ -2,10 +2,11 @@ import scrapy
 import os
 import subprocess
 import urlparse
-import datetime
+from datetime import datetime, timedelta
 import time
 import re
 from texttable import Texttable
+import json
 
 #format file with regex:
 #(vixen|tushy)\s(\d\d\.\d\d\.\d\d)\.(.*)(\.And.*)?\.XXX.*
@@ -17,7 +18,8 @@ old_title_XPath = ".//a/@href"
 new_article_XPath = "//div[contains(@data-test-component,'VideoList')]//div[@data-test-component='VideoThumbnailContainer']/div/a/@href"
 new_date_XPath = "//button[@data-test-component='ReleaseDate']/span/text()"
 #new_title_XPath = "//h1[@data-test-component='VideoTitle']/text()"
-new_date_pattern = r'.*releaseDateFormatted":"(.* .* .*)","runLengthFormatted'
+new_date_pattern = r'.*releaseDateFormatted\":\"(.*\s.*,\s201\d)\"\}\]'
+#new_date_pattern = r'<span data-test-component=\"ReleaseDateFormatted\">(.*\s.*,\s201\d)</span>'
 
 class SearchSpider(scrapy.Spider):
     name = "search"    
@@ -47,7 +49,8 @@ class SearchSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=(self.parse_old if self.studio == "vixen" else self.parse_new))
+            print url
+            yield scrapy.Request(url=url, callback=(self.parse_new))
 
     def parse_old(self, response):
         #print "handle vixen"
@@ -80,8 +83,8 @@ class SearchSpider(scrapy.Spider):
             pass
         for article in articles:
             movie_url = response.urljoin(article)
-            #print movie_url
-            yield scrapy.Request(movie_url, callback=self.parse_date)
+            print movie_url
+            yield scrapy.Request(movie_url, callback=self.parse_date_by_json)
 
         #nextPage_XPath = "//a[contains(@class,'pagination-link pagination-next ajaxable')]/@href"
         #nextPageUrl = response.xpath(nextPage_XPath).extract_first()
@@ -100,7 +103,8 @@ class SearchSpider(scrapy.Spider):
         date_match = re.search(new_date_pattern, response.text)
         if date_match:
             date = date_match.group(1)
-            isoDate = time.strftime('%Y-%m-%d', time.strptime(date, "%B %d, %Y"))
+            realDate = datetime.strptime(date,"%B %d, %Y") + timedelta(days=1)
+            isoDate = realDate.strftime('%Y-%m-%d') 
             cmd = "./runscrapy.sh %s %s" %(self.studio, response.url.replace('https://www.' + self.studio + '.com/', ''))
             #print isoDate + ' ' + cmd
             if isoDate == self.filedate:
@@ -111,6 +115,26 @@ class SearchSpider(scrapy.Spider):
 
         else:
             print "No date found."
+
+    def parse_date_by_json(self, response):
+        json_text = re.search('window.__INITIAL_STATE__ = (.*)?;', response.text)
+        if json_text:
+            json_obj_txt = json_text.group(1)
+            json_obj = json.loads(json_obj_txt)
+            allMovies = json_obj["videos"]
+            for movie in allMovies:
+                if "id" in movie:
+                    date = movie["releaseDateFormatted"]
+                    realDate = datetime.strptime(date,"%B %d, %Y")# + timedelta(days=1)
+                    isoDate = realDate.strftime('%Y-%m-%d') 
+                    cmd = "./runscrapy.sh %s %s" %(self.studio, response.url.replace('https://www.' + self.studio + '.com/', ''))
+                    #print isoDate + ' ' + cmd
+                    if isoDate == self.filedate:
+                        print "%s" % cmd
+                    self.articleDict[isoDate] = [self.count, date, response.url.replace('https://www.' + self.studio + '.com/', ''), cmd]
+                    self.actionDict[self.count] = [cmd]
+                    self.count += 1
+            #print json_obj
 
     def closed(self, reason):
         resultTable = Texttable()
