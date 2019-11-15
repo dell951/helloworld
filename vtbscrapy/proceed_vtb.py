@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 search_path = str(sys.argv[1])
 
-search_string_pattern= r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*)\.mp4'
+search_string_pattern = r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*?)(\.and\..*)?(\.4k)?\.mp4'
 
 for parent, dirnames, filenames in os.walk(search_path):
     for filename in filenames:
@@ -28,17 +28,18 @@ for parent, dirnames, filenames in os.walk(search_path):
             else:
                 search_target = filename.lower()
                 if search_target.startswith("blacked") or search_target.startswith("tushy") or search_target.startswith("vixen"):
+                    print "# proceed file %s" % search_target
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
                         theStudio = target_match.group(1)
-                        theActor = target_match.group(3).replace('.4k','').replace('.and','')
+                        theActor = target_match.group(3)
                         theDate = target_match.group(2)
                         cmd = "./docker-search.sh %s %s %s %s" %(theStudio, theActor, theDate,'False')
-                        print "#%s" % cmd
+                        print "# %s" % cmd
                         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         output, err = p.communicate()
                         scrapycmd = output.split(b'\n')[0]
-                        print "#output - [[[%s]]]" % scrapycmd
+                        #print "# output - [[[%s]]]" % scrapycmd
                         if scrapycmd == "Nothing found":
                             pass
                         else:
