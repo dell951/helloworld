@@ -84,45 +84,47 @@ class QuotesSpider(scrapy.Spider):
         if json_text:
             json_obj = json.loads(json_text.group(1))
             allvideos = json_obj['videos']
-            movie_data = allvideos[len(allvideos) - 1]
-            page_data = json_obj['page']['data']['/%s' % self.title]['data']
-            self.movie_title = movie_data['title']
-            print 'Movie Tile         - %s' % self.movie_title.encode('utf-8')
-            self.movie_rate = movie_data['textRating']
-            print 'Rate               - %s' % self.movie_rate
-            self.movie_date = movie_data['releaseDateFormatted']
-            print 'Release Date       - %s' % self.movie_date
-            self.movie_desc = movie_data['title']
-            print 'Description        - %s' % self.movie_desc.encode('utf-8')
-            posters = movie_data['images']['poster']
-            subprocess.call('mkdir -p alldone', shell = True)
-            for poster in posters:
-                if '320x362' in poster['name']:
-                    self.poster_url = poster['highdpi']['2x']
-                    print 'poster             - %s' % self.poster_url
-                    rposter = requests.get(self.poster_url, stream = True)
-                    poster_path = self.title + '-poster.jpg'
-                    if rposter.status_code == 200:
-                        with open(os.path.join('alldone', poster_path), 'wb') as f0:
-                            rposter.raw.decode_content = True
-                            shutil.copyfileobj(rposter.raw, f0)
-                    
-            fanart = page_data['pictureset'][0]
-            self.fanart_url = fanart['main'][0]['src']
-            print 'fanart             - %s' % self.fanart_url
-            rfanart = requests.get(self.fanart_url, stream = True)
-            fanart_path = self.title + '-fanart.jpg'
-            if rfanart.status_code == 200:
-                with open(os.path.join('alldone', fanart_path), 'wb') as f1:
-                    rfanart.raw.decode_content = True
-                    shutil.copyfileobj(rfanart.raw, f1)
-            models = movie_data['modelsSlugged']
-            for model in models:
-                star_url = '/%s' % model['slugged']
-                print 'star_url             - %s' % star_url
-                star_page = response.urljoin(star_url)
-                yield scrapy.Request(star_page, callback = self.parse_stars_by_json)
-                None
+            for movie in allvideos:
+                if "id" in movie:
+                    movie_data = movie
+                    page_data = json_obj['page']['data']['/%s' % self.title]['data']
+                    self.movie_title = movie_data['title']
+                    print 'Movie Tile         - %s' % self.movie_title.encode('utf-8')
+                    self.movie_rate = movie_data['textRating']
+                    print 'Rate               - %s' % self.movie_rate
+                    self.movie_date = movie_data['releaseDateFormatted']
+                    print 'Release Date       - %s' % self.movie_date
+                    self.movie_desc = movie_data['title']
+                    print 'Description        - %s' % self.movie_desc.encode('utf-8')
+                    posters = movie_data['images']['poster']
+                    subprocess.call('mkdir -p alldone', shell = True)
+                    for poster in posters:
+                        if '320x362' in poster['name']:
+                            self.poster_url = poster['highdpi']['2x']
+                            print 'poster             - %s' % self.poster_url
+                            rposter = requests.get(self.poster_url, stream = True)
+                            poster_path = self.title + '-poster.jpg'
+                            if rposter.status_code == 200:
+                                with open(os.path.join('alldone', poster_path), 'wb') as f0:
+                                    rposter.raw.decode_content = True
+                                    shutil.copyfileobj(rposter.raw, f0)
+                            
+                    fanart = page_data['pictureset'][0]
+                    self.fanart_url = fanart['main'][0]['src']
+                    print 'fanart             - %s' % self.fanart_url
+                    rfanart = requests.get(self.fanart_url, stream = True)
+                    fanart_path = self.title + '-fanart.jpg'
+                    if rfanart.status_code == 200:
+                        with open(os.path.join('alldone', fanart_path), 'wb') as f1:
+                            rfanart.raw.decode_content = True
+                            shutil.copyfileobj(rfanart.raw, f1)
+                    models = movie_data['modelsSlugged']
+                    for model in models:
+                        star_url = '/%s' % model['slugged']
+                        print 'star_url             - %s' % star_url
+                        star_page = response.urljoin(star_url)
+                        yield scrapy.Request(star_page, callback = self.parse_stars_by_json)
+                        None
             
         else:
             print "Somehow I didn't find the Json data[Movie]"
