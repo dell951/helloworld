@@ -32,7 +32,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                     target_match = re.match(search_string_pattern, search_target)
                     if target_match:
                         cmd = "./docker-search.sh %s %s %s %s" %('letsdoeit', target_match.group(3),target_match.group(2),'False')
-                        print "#%s" % cmd
+                        print "# %s" % cmd
                         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         output, err = p.communicate()
                         scrapycmd = output.split(b'\n')[0]
@@ -40,9 +40,8 @@ for parent, dirnames, filenames in os.walk(search_path):
                         if scrapycmd == "Nothing found":
                             pass
                         else:
-                            print scrapycmd
+                            print "# %s" % scrapycmd
                             targetFileName = scrapycmd.split(' ')[2]
-                            print targetFileName
                             matchId = re.search(r'https://letsdoeit.com/watch/(\d*?)/(.*?)\.en\.html',targetFileName)
                             if matchId:
                                 print "mv %s %s.mp4" % (full_path, os.path.join(parent,matchId.group(2)))
