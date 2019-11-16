@@ -12,7 +12,7 @@ from texttable import Texttable
 #(vixen|tushy)\s(\d\d\.\d\d\.\d\d)\.(.*)(\.And.*)?\.XXX.*
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
-video_item_xpath = '//div[contains(@class,"row")]//div[contains(@class,"video-item")]//a[contains(@class,"title")]/@href'
+video_item_xpath = '//div[contains(@class,"main-content-videos")]//div[contains(@class,"row sides")]//div[contains(@class,"card-video")]'
 letsdoeit_Json_xpath = "//script[contains(@type,'application/ld+json')]/text()"
 target_url_pattern = r'trailer\/.*?\/(.*)'
 
@@ -31,13 +31,13 @@ class SearchLetsdoeit(scrapy.Spider):
     def __init__(self, studio, queryKey, filedate="", showFullresult=False, *args, **kwargs):
         super(SearchLetsdoeit, self).__init__(*args, **kwargs)
         self.studio = studio
-        self.queryKey = queryKey
+        self.queryKey = queryKey.replace(".","%20")
         if filedate != "":
             self.filedate="20%s"%filedate.replace(".","-")
         self.showFullresult = showFullresult
         #adate = datetime.datetime.strptime(targetDate, "%Y-%m-%d").date()
         #self.filedate = "%s %d, %s" % (adate.strftime("%B"), adate.day, adate.strftime("%Y"))
-        self.baseUrl = 'https://' + self.studio + '.com/videos?keywords='+ self.queryKey
+        self.baseUrl = 'https://' + self.studio + '.com/search.en.html?q='+ self.queryKey
         
     def start_requests(self):
         urls = [
@@ -49,36 +49,24 @@ class SearchLetsdoeit(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse_movies)
 
     def parse_movies(self, response):
-        articles = response.xpath(video_item_xpath).extract()
-        if len(articles) == 0:
+        videoItem = response.xpath(video_item_xpath).extract()
+        if len(videoItem) == 0:
             print "Nothing found"
             pass
-        for article in articles:
-            movie_url = 'https://www.' + self.studio + '.com' + article
-            #print movie_url
-            yield scrapy.Request(movie_url, headers={"User-Agent": USER_AGENT}, callback=self.parse_date)
-
-    def parse_date(self, response):
-        json_text = response.xpath(letsdoeit_Json_xpath).extract_first()
-        if json_text:
-            formated_json = json_text.replace('\n','').replace('},    }','}}')
-            movie_data = json.loads(formated_json)
-            movie_simpledate = re.sub(r'T\d\d:\d\d:\d\d','',movie_data["uploadDate"]) #movie_data["uploadDate"].replace('T00:00:00','')
-            movie_id = movie_data['url'].replace('https://' + self.studio + '.com/video/', '')
-            movie_id = movie_id.split('/')[1]
-            #isoDate = time.strftime('%Y-%m-%d', time.strptime(movie_simpledate, "%B %d, %Y"))
-            cmd = "./runscrapy.sh %s %s" %(self.studio, movie_id)
-            #print isoDate + ' ' + cmd
-            if movie_simpledate == self.filedate:
-                print "%s" % cmd
-                self.found = True
-
-            self.articleDict[movie_simpledate] = [self.count, movie_simpledate, movie_id, cmd]
-            self.actionDict[self.count] = [cmd]
-            self.count += 1
-
-        else:
-            print "No date found."
+        for theVideo in videoItem:
+            matchesDate = re.findall(r'20\d\d-\d\d-\d\d', theVideo)
+            for match in matchesDate:
+                if match == self.filedate:
+                    matchUrl_match = re.search(r'<a\sclass=\"fake\"\shref=\"(.*?)\">', theVideo)
+                    if matchUrl_match:
+                        matchUrl = matchUrl_match.group(1)
+                        cmd = "./runscrapy.sh %s %s" %(self.studio, matchUrl)
+                        print "%s" % cmd
+                        self.found = True
+                    self.articleDict[match] = [self.count, match, matchUrl, cmd]
+                    self.actionDict[self.count] = [cmd]
+                    self.count += 1
+            #yield scrapy.Request(theVideo, headers={"User-Agent": USER_AGENT}, callback=self.parse_date)
 
     def closed(self, reason):
         resultTable = Texttable()

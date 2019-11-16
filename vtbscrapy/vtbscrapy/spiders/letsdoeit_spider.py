@@ -45,7 +45,7 @@ actorTemplate = """  <actor>
 
 #https://letsdoeit.com/videos?keywords=babes-love-to-rock-n-roll
 
-letsdoeit_Json_xpath = "//script[contains(@type,'application/ld+json')]/text()"
+letsdoeit_video_xpath = '//div[contains(@class,"module module-video-details")]'
 
 class LetsDoeItSpider(scrapy.Spider):
     name = "letsdoeit"    
@@ -64,28 +64,18 @@ class LetsDoeItSpider(scrapy.Spider):
         super(LetsDoeItSpider, self).__init__(*args, **kwargs)
         self.studio = studio
         self.title = title
-        self.base_url = 'https://www.' + self.studio + '.com'
+        self.base_url = title
 
     def start_requests(self):
-        search_url = self.base_url + '/videos?keywords=' + self.title
-        print "Proceeding %s" % search_url 
-        request = scrapy.Request(url=search_url, callback=self.search_letsdoeit)
+        print "Proceeding %s" % self.base_url 
+        request = scrapy.Request(url=self.base_url, callback=self.parse_letsdoeit)
 #        request.meta['dont_redirect'] = True
         yield request
 
-    def search_letsdoeit(self, response):
-        movie_url_xpath="//div[contains(@class,'video-item')]//a[contains(@class,'item-top')]/@href"
-        moive_urls = response.xpath(movie_url_xpath).extract()
-        for movie_url in moive_urls:
-            url = movie_url.rsplit('/', 1)[-1]
-            if url == self.title:
-                full_movie_url = self.base_url + movie_url
-                request = scrapy.Request(url=full_movie_url, callback=self.parse_letsdoeit)
-#                request.meta['dont_redirect'] = True
-                yield request
-
     def parse_letsdoeit(self, response):
-        json_text = response.xpath(letsdoeit_Json_xpath).extract_first()
+        #below won't work, try manually
+        return
+        json_text = response.xpath(letsdoeit_video_xpath).extract_first()
         if json_text:
             formated_json = json_text.replace('\n','').replace('},    }','}}')
             movie_data = json.loads(formated_json)

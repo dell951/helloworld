@@ -1,19 +1,35 @@
 from scrapy.cmdline import execute
 
 try:
+    #for letsdoeit
     execute(
         [
             'scrapy',
             'crawl',
-            'vtb',
+            'letsdoeit',
             '-a',
-            'studio=blacked',
+            'studio=letsdoeit',
             '-a',
-            'title=best-friends-share',
+            'title=https://letsdoeit.com/watch/71876/anal-happy-ending.en.html',
             '-o',
             'out.json'
         ]
     )
+
+    # for vtb
+    # execute(
+    #     [
+    #         'scrapy',
+    #         'crawl',
+    #         'vtb',
+    #         '-a',
+    #         'studio=blacked',
+    #         '-a',
+    #         'title=best-friends-share',
+    #         '-o',
+    #         'out.json'
+    #     ]
+    # )
 
 #    execute(
 #        [
