@@ -45,7 +45,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                             print targetFileName
                             matchId = re.search(r'https://letsdoeit.com/watch/(\d*?)/(.*?)\.en\.html',targetFileName)
                             if matchId:
-                                print "mv %s %s.mp4" % (full_path, os.path.join(parent,matchId.group[2]))
+                                print "mv %s %s.mp4" % (full_path, os.path.join(parent,matchId.group(2)))
                             else:
                                 print "not found matchId for %s" % targetFileName
 
