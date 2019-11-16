@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 search_path = str(sys.argv[1])
 
-search_string_pattern= r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*)\.mp4'
+search_string_pattern= r'(.*)\.(\d\d\.\d\d\.\d\d)\.(.*?)(\.and\..*)?(\.4k)?\.mp4'
 
 for parent, dirnames, filenames in os.walk(search_path):
     for filename in filenames:
