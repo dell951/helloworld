@@ -43,7 +43,7 @@ for parent, dirnames, filenames in os.walk(search_path):
                             print scrapycmd
                             targetFileName = scrapycmd.split(' ')[2]
                             print targetFileName
-                            matchId = re.search(r'https://letsdoeit.com/watch/(\d*?)/(.*?)\.en\.html\.mp4',targetFileName)
+                            matchId = re.search(r'https://letsdoeit.com/watch/(\d*?)/(.*?)\.en\.html',targetFileName)
                             if matchId:
                                 print "mv %s %s.mp4" % (full_path, os.path.join(parent,matchId.group[2]))
                             else:
