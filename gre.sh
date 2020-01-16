@@ -5,6 +5,12 @@ VAR2="$2"
 
 echo "------------------------------------------"
 MOREF=`grep -i "$VAR1"-"$VAR2" allmine.txt`
+if [ "$?" = "1" ]
+then
+	echo "file $VAR1-$VAR2 not found"
+	exit 1
+fi
+
 echo "$MOREF"
 
 SIZE=`du -sh "$MOREF"`
