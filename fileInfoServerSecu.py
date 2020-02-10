@@ -88,7 +88,9 @@ def search_in_local(jid):
             break
     
     total = hasHighBackup(jid)
-    if total.size() >= 2:
+    print total
+    print len(total)
+    if len(total) >= 2:
         hbackup = True
 
     details = {
