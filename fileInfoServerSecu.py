@@ -77,6 +77,7 @@ def search_in_local(jid):
     res = ''
     found = False
     czimu = False
+    hbackup = False
     for line in datafile:
         if jid.lower().replace('-','') in line.lower().replace('-',''):
             found = True
@@ -86,11 +87,16 @@ def search_in_local(jid):
                 czimu = True
             break
     
+    total = hasHighBackup(jid)
+    if total.size() >= 2:
+        hbackup = True
+
     details = {
         "found": found,
         "czimu": czimu,
         "path": path,
-        "resolution": res
+        "resolution": res,
+        "hbackup": hbackup
     }
     if found:
         logging.info(jid + " Found!")
@@ -98,6 +104,17 @@ def search_in_local(jid):
         logging.info(jid + " Not exist.")
     datafile.seek(0)
     return details
+
+def hasHighBackup(jid):
+    cmd = "grep -i " + jid + " " + filename
+    process = subprocess.Popen([cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    ret = []
+    while process.poll() is None:
+        line = process.stdout.readline()
+        if line != '':
+            ret.append(line.strip())
+    return ret
 
 def retrieve_resolution(path):
     cmd = "ffmpeg -i "+ path +" 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2"
