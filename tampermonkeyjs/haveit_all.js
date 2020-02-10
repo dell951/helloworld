@@ -5,6 +5,8 @@
 // @include      http://javtorrent.re/*
 // @include      http://www.javlibrary.com/*
 // @include      https://www.xianrenfuli.com/*
+// @include      https://www.sehuatanghd.com/*
+// @include      https://www.777x.com/*
 // @include      http://*/pw/*
 // @include      https://shtsds1.me/*
 // @include      http://*lufi99.info/*
@@ -13,6 +15,8 @@
 // @include      https://www.javbus.com/*
 // @include      https://www.busdmm.cc*
 // @include      http://*/2048/*
+// @include      http*://www.busdmm.cc/*
+// @include      http*://www.dmmbus.co/*
 // @include      http*://*javbus.com/*
 // @include      https://www.busdmm.cc/*
 // @include      http*://*t66y.com/*
@@ -21,6 +25,7 @@
 // @include      http://www.zhaileba.info/*
 // @include      http://cntorrentkitty.com/*
 // @include      http://www.ceo-7158.com/*
+// @include      https://www.sehuatang.org/*
 // @include      file:///Users/azu/Desktop/a.html
 // @version      0.6
 // @description  do I have it already?
@@ -119,6 +124,11 @@ var iterateMyFav = function(fulltext){
                   color: white;\
 		         font-weight: bold;\
                }\
+              .markczimubackup {\
+                  background-color: #0F7884;\
+                  color: #6bff75;\
+		         font-weight: bold;\
+               }\
               .markHczimu {\
                 background-color: #0F7884;\
                 color: yellow;\
@@ -163,8 +173,12 @@ var iterateMyFav = function(fulltext){
                     if (detail.czimu){
                         if (detail.resolution[0] >= 1080)
                             $("body").mark(match,{"className": "markHczimu"});
-                        else
-                            $("body").mark(match,{"className": "markczimu"});
+                        else {
+                            if (detail.hbackup)
+                                $("body").mark(match,{"className": "markczimu"});
+                            else
+                                $("body").mark(match,{"className": "markczimubackup"});
+                        }
                     }else{
                         if (detail.resolution[0] >= 1080)
                             $("body").mark(match,{"className": "markHfound"});
