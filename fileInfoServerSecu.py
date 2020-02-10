@@ -116,5 +116,6 @@ def retrieve_resolution(path):
     return ret
 
 if __name__ == "__main__":
-    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context='adhoc')
+#    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context='adhoc')
+    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context=('cert.pem','key.pem'))
 
