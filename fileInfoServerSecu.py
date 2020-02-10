@@ -88,7 +88,9 @@ def search_in_local(jid):
             break
     
     total = hasHighBackup(jid)
-    if total.size() >= 2:
+    print total
+    print len(total)
+    if len(total) >= 2:
         hbackup = True
 
     details = {
@@ -133,5 +135,6 @@ def retrieve_resolution(path):
     return ret
 
 if __name__ == "__main__":
-    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context='adhoc')
+#    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context='adhoc')
+    app.run(threaded=True,host='0.0.0.0',port=5556,ssl_context=('cert.pem','key.pem'))
 
