@@ -124,7 +124,14 @@ def hasHighBackup(jid):
     while process.poll() is None:
         line = process.stdout.readline()
         if line != '':
-            ret.append(line.strip())
+            ret.append(line[:-1])
+            #ret.append(line.strip())
+    
+    stdout, stderr = process.communicate()
+    ret += stdout.split('\n')
+    if stderr != '':
+        ret += stderr.split('\n')
+    ret.remove('')
     return ret
 
 def retrieve_resolution(path):
