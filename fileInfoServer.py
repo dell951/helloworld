@@ -47,6 +47,7 @@ def find():
         found = False
         czimu = False
         res = ''
+        hbackup = False
         for line in lines:
             if qid.lower().replace('-','') in line.lower().replace('-',''):
                 found = True
@@ -56,7 +57,7 @@ def find():
                     czimu = True                
                 break
 
-        total = hasHighBackup(jid)
+        total = hasHighBackup(qid)
         print total
         print len(total)
         if len(total) >= 2:
