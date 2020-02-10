@@ -3,16 +3,24 @@
 // @namespace    http://tampermonkey.net/
 // @include      http://888kf.xyz/*
 // @include      http://javtorrent.re/*
+// @include      https://www.sehuatang.org/*
+// @include      https://www.777x.com/*
+// @include      http://thz4.net/*
+// @include      http://www.ssl.yx51.net/bbs/*
 // @include      http://www.javlibrary.com/*
 // @include      https://www.xianrenfuli.com/*
+// @include      http://cngougoubt.co/sou/*
+// @include      http://thzvv.net/*
 // @include      https://www.sehuatanghd.com/*
 // @include      https://www.777x.com/*
 // @include      http://*/pw/*
 // @include      https://shtsds1.me/*
 // @include      http://*lufi99.info/*
 // @include      http://1024.qdldd.biz/*
+// @include      https://btos.pw/search/*
 // @include      http://*2.*.*/*
 // @include      https://www.javbus.com/*
+// @include      https://av-help.memo.wiki/*
 // @include      https://www.busdmm.cc*
 // @include      http://*/2048/*
 // @include      http*://www.busdmm.cc/*
@@ -27,7 +35,7 @@
 // @include      http://www.ceo-7158.com/*
 // @include      https://www.sehuatang.org/*
 // @include      file:///Users/azu/Desktop/a.html
-// @version      0.6
+// @version      0.7
 // @description  do I have it already?
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
