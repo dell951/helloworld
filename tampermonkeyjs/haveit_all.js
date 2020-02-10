@@ -183,9 +183,9 @@ var iterateMyFav = function(fulltext){
                             $("body").mark(match,{"className": "markHczimu"});
                         else {
                             if (detail.hbackup)
-                                $("body").mark(match,{"className": "markczimu"});
-                            else
                                 $("body").mark(match,{"className": "markczimubackup"});
+                            else
+                                $("body").mark(match,{"className": "markczimu"});
                         }
                     }else{
                         if (detail.resolution[0] >= 1080)
