@@ -56,11 +56,18 @@ def find():
                     czimu = True                
                 break
 
+        total = hasHighBackup(jid)
+        print total
+        print len(total)
+        if len(total) >= 2:
+            hbackup = True
+            
         details = {
             "found": found,
             "czimu": czimu,
             "path": path,
-            "resolution": res
+            "resolution": res,
+            "hbackup": hbackup
         }
         rtn_json[qid] = details
 

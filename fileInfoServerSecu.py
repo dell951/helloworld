@@ -47,6 +47,7 @@ def find():
         found = False
         czimu = False
         res = ''
+        hbackup = False
         for line in lines:
             if qid.lower().replace('-','') in line.lower().replace('-',''):
                 found = True
@@ -55,11 +56,17 @@ def find():
                 if 'czimu' in line:
                     czimu = True                
                 break
+        
+        total = hasHighBackup(qid)
+        if len(total) >= 2:
+            hbackup = True
+        
         details = {
             "found": found,
             "czimu": czimu,
             "path": path,
-            "resolution": res
+            "resolution": res,
+            "hbackup": hbackup
         }
         rtn_json[qid] = details
 
@@ -88,8 +95,6 @@ def search_in_local(jid):
             break
     
     total = hasHighBackup(jid)
-    print total
-    print len(total)
     if len(total) >= 2:
         hbackup = True
 
