@@ -8,6 +8,7 @@ import os
 import sys
 import argparse
 import logging
+from PIL import Image
 
 nfoTemplate = """<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
@@ -65,6 +66,8 @@ parser.add_argument('-r', '--releasedate', required=False, nargs=1, help=("Relea
 
 args = parser.parse_args()
 logging.getLogger().setLevel(logging.INFO)
+with open(args.inputfile[0], 'a'):
+    pass
 filename = os.path.split(args.inputfile[0])
 os.chdir(filename[0])
 fid, ext = os.path.splitext(filename[1])
@@ -98,6 +101,10 @@ else:
   poster = requests.get(poster_url, allow_redirects=True)
   with open(os.path.join('', fid +"-poster.jpg"), "wb") as posterfile:
     posterfile.write(poster.content)
+  im = Image.open(fid+'-poster.jpg')
+  if im.format == "WEBP":
+     im.convert('RGB')
+     im.save(fid+'-poster.jpg','jpeg')
 
 if not args.fanart:
   fanart_url = ""
@@ -106,6 +113,10 @@ else:
   fanart = requests.get(fanart_url, allow_redirects=True)
   with open(os.path.join('', fid +"-fanart.jpg"), "wb") as fanrtfile:
     fanrtfile.write(fanart.content)
+  im = Image.open(fid+'-fanart.jpg')
+  if im.format == "WEBP":
+     im.convert('RGB')
+     im.save(fid+'-fanart.jpg','jpeg')
 
 for actor in args.actors:
   logging.info("Add actor - %s" % actor)

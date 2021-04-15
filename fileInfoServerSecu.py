@@ -3,6 +3,8 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask_cors import CORS
+import os
 import datetime
 import json
 import sys
@@ -17,6 +19,21 @@ filename = '/volume1/nas-share/helloworld/allmine.txt'
 #filename = '/volume1/nas-share/helloworld/allmine.txt'
 datafile = file(filename)
 app = Flask(__name__)
+CORS(app)
+
+@app.route("/postnfo", methods=['POST'])
+def handlenfo():
+    nfoJson = request.get_json()
+    cmd = './nfomaker.py -i ' + nfoJson["file"] + ' -m "' + nfoJson["title"] + '" -s "' + nfoJson["studio"] + '" -r "' + nfoJson["date"] + '" -d "' + nfoJson["desc"] + '"' + ' -f "' + nfoJson["fanart"] + '"' + ' -p "' + nfoJson["poster"] + '"'
+    for star in nfoJson["stars"]:
+        if (star.strip() != ""):
+            cmd = cmd + ' -a "' + star.strip() + '"'
+    os.system(cmd)
+    response = app.make_response(jsonify(details={"Status":"Succeeded"}))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST'
+    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
+    return response
 
 @app.route("/jid=<jid>")
 def queryJid(jid):
