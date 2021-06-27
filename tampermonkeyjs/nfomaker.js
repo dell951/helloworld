@@ -11,11 +11,14 @@
 // @include      https://*metart.com/*
 // @include      https://*newsensations.com/*
 // @include      https://*sweetsinner.com/*
-// @include      https://javdb.com/v/*
+// @include      https://javdb*.com/v/*
 // @include      https://*wowgirlsblog.com/*
 // @include      https://*18onlygirlsblog.com/*
 // @include      https://*passion-hd.com/*
-// @version      0.1
+// @include      https://*tiny4k.com/*
+// @include      https://*21naturals.com/*
+// @include      https://*eroticax.com/*
+// @version      0.2
 // @description  NFO Maker
 // @author       You
 // @require      http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js
@@ -42,29 +45,39 @@ var pickUpSite = function(body){
         setTimeout(function() {metartNFOGenerator(body);}, 5000);
     else if (site === "newsensations")
         newsensationsNFOGenerator(body);
-    else if (site === "passion-hd")
-        passionHdNFOGenerator(body);
+    else if (site === "passion-hd" || site === "tiny4k")
+        passionHdNFOGenerator(body, site);
+    else if (site === "21naturals")
+        TwentyOnenaturalsNFOGenerator(body);
+    else if (site === "eroticax")
+        eroticaxNFOGenerator(body);
     else if (site === "wowgirlsblog" || site === "18onlygirlsblog")
         setTimeout(function() {wowgirlsNFOGenerator(body);}, 5000);
     else if (site === "vixen" || site === "tushy" || site === "blacked")
         vtbNFOGenerator(body, site);
     else if (site === "sweetsinner")
         setTimeout(function() {sweetsinnerNFOGenerator(body);}, 5000);
-    else if (site === "javdb")
+    else if (site.startsWith('javdb'))
         javDbNFOGenerator(body);
     else console.log("Not Supported");
 }
 
 var javDbNFOGenerator = function(body) {
-    var movieFile = document.querySelector("nav.video-panel-info span.value").textContent;
+    var movieFile = "";
+    if (document.querySelector("nav.movie-panel-info span.value"))
+        movieFile = document.querySelector("nav.movie-panel-info span.value").textContent;
     var movieTitle = document.querySelector("h2.title strong").textContent.replace(movieFile, "").trim();
-    var movieDate = document.querySelectorAll("div.movie-info-panel div.panel-block")[1].querySelector("span").textContent;
+    var movieDate = document.querySelectorAll("nav.movie-panel-info div.panel-block")[1].querySelector("span").textContent;
     var movieDesc = movieTitle;
-    var starsList = document.querySelectorAll("div.movie-info-panel div.panel-block")[8].querySelector("span").textContent.split(",");
+    var starsList = [];
+    if (document.querySelectorAll("nav.movie-panel-info div.panel-block")[8])
+     starsList = document.querySelectorAll("nav.movie-panel-info div.panel-block")[8].querySelector("span").textContent.split(" ");
     var movieStars = [];
     starsList.forEach((star) => {
-        movieStars.push(star.trim());
-        console.log(star.trim());
+        if (!star.includes('♂')) {
+            movieStars.push(star.replace('♀','').replace('♂','').trim());
+            console.log(star.replace('♀','').replace('♂','').trim());
+        }
     });
     var movieFanart = document.querySelector("img.video-cover").src;
     var moviePoster = movieFanart.replace("/covers/","/thumbs/");
@@ -96,17 +109,64 @@ var sweetsinnerNFOGenerator = function(body) {
     outPutCommand(movieFile, movieTitle, 'sweetsinner', movieDesc, movieDate, movieStars, movieFanart, moviePoster, true);
 }
 
-// No Date found on page.
-var passionHdNFOGenerator = function(body) {
+// Google Posters 21Naturals
+var TwentyOnenaturalsNFOGenerator = function(body) {
+    var movieFile = window.location.pathname.split('/')[3]
+    console.log(movieFile);
+    var movieTitle = document.querySelector("div.titleBar h1.title").textContent;
+    console.log(movieTitle);
+    var movieDate = document.querySelector("div.updatedDate").textContent.trim();
+    console.log(movieDate);
+    var movieDesc = document.querySelector("div.sceneDesc").textContent.replace('Video Description:','').trim()
+    console.log(movieDesc);
+    var starsList = document.querySelectorAll("div.sceneCol.sceneColActors a")
+    var movieStars = [];
+    starsList.forEach((star) => {
+        movieStars.push(star.text);
+        console.log(star.text);
+    })
+    var movieFanart = document.querySelector("div.playerDiv div.vjs-poster").style.backgroundImage.replace('url("','').replace('")','');
+    var moviePoster = movieFanart;
+    outPutCommand(movieFile, movieTitle, '21naturals', movieDesc, movieDate, movieStars, movieFanart, moviePoster, true);
+}
+
+var eroticaxNFOGenerator = function(body) {
+    var movieFile = window.location.pathname.split('/')[3]
+    console.log(movieFile);
+    var movieTitle = document.querySelector("div.titleBar h1.title").textContent;
+    console.log(movieTitle);
+    var dateStr = document.querySelector("div.updatedDate").textContent.trim();
+    var movieDate = new Date(dateStr).toLocaleDateString("en-CA");
+    console.log(movieDate);
+    var movieDesc = "movieTitle";
+    if (document.querySelector("div.sceneDesc"))
+        document.querySelector("div.sceneDesc").textContent.replace('Video Description:','').trim();    console.log(movieDesc);
+    var starsList = document.querySelectorAll("div.sceneCol.sceneColActors a")
+    var movieStars = [];
+    starsList.forEach((star) => {
+        movieStars.push(star.text);
+        console.log(star.text);
+    })
+    var movieFanart = document.querySelector("div.playerDiv div.vjs-poster").style.backgroundImage.replace('url("','').replace('")','');
+    var moviePoster = movieFanart;
+    outPutCommand(movieFile, movieTitle, 'eroticax', movieDesc, movieDate, movieStars, movieFanart, moviePoster, true);
+}
+
+// No Date found on page. search it from google.
+var passionHdNFOGenerator = function(body, site) {
     var movieFile = window.location.pathname.split("/")[2];
     console.log(movieFile);
     var movieTitle = document.querySelector("h1").textContent;
     console.log(movieTitle);
     var movieDate = "";
     console.log(movieDate);
-    var movieDesc = document.querySelector("div#t2019-side div#t2019-sinfo div").textContent.trim();
+    var movieDesc = "";
+    if (document.querySelector("div#t2019-side div#t2019-sinfo div"))
+        movieDesc = document.querySelector("div#t2019-side div#t2019-sinfo div").textContent.trim();
     console.log(movieDesc);
-    var starsList = document.querySelector("div#t2019-side div#t2019-sinfo div#t2019-models").querySelectorAll("a");
+    var starsList = [];
+    if (document.querySelector("div#t2019-side div#t2019-sinfo div#t2019-models"))
+        starsList = document.querySelector("div#t2019-side div#t2019-sinfo div#t2019-models").querySelectorAll("a");
     var movieStars = [];
     starsList.forEach((star) => {
         movieStars.push(star.text);
@@ -118,7 +178,7 @@ var passionHdNFOGenerator = function(body) {
     var moviePoster = movieFanart;
     if (document.querySelector("div.t2019-thumbs a img"))
         moviePoster = document.querySelector("div.t2019-thumbs a img").src
-    outPutCommand(movieFile, movieTitle, 'passion-hd', movieDesc, movieDate, movieStars, movieFanart, moviePoster, false);
+    outPutCommand(movieFile, movieTitle, site, movieDesc, movieDate, movieStars, movieFanart, moviePoster, false);
 }
 
 // search the movie name and get the pictures and pick up poster
@@ -246,7 +306,11 @@ var sexartNFOGenerator = function(body) {
         movieStars.push(star.trim());
         console.log(star.trim());
     });
-    var movieFanart = document.querySelector("div.player div.jw-preview").style.backgroundImage.replace('url("','').replace('")','');
+    var movieFanart = "";
+    if (document.querySelector("div.player div.jw-preview"))
+        movieFanart = document.querySelector("div.player div.jw-preview").style.backgroundImage.replace('url("','').replace('")','');
+    else
+        movieFanart = document.querySelector("div.player img").src;
     console.log(movieFanart);
     var moviePoster = document.querySelector("div.movie-image-panel div.img-container img").src;
     console.log(moviePoster);
@@ -325,8 +389,9 @@ var vtbNFOGenerator = function(body, site) {
        movieStars.push(star.text);
    });
 
-   var movieFanart = document.querySelectorAll("div[data-test-component=ProgressiveImage]")[0].querySelectorAll("picture")[0].querySelector("source").src;
-   var moviePoster = movieFanart;
+   //var movieFanart = document.querySelectorAll("div[data-test-component=ProgressiveImage]")[0].querySelectorAll("picture")[0].querySelector("source").src;
+   var movieFanart = document.querySelector("div[data-test-component=VideoCoverWrapper]").querySelectorAll("div[data-test-component=ProgressiveImage]")[0].querySelector("picture img").src;
+    var moviePoster = movieFanart;
    outPutCommand(movieFile, movieTitle, site, movieDesc, movieDate, movieStars, movieFanart, moviePoster, true);
 };
 
